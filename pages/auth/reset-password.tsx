@@ -51,21 +51,24 @@ const ResetPassword = () => {
 
         if (password !== password2) {
             setErrorMessage("Please ensure your passwords match.");
-        } else {
-            const { error } = await supabase.auth.updateUser({
-                password: password,
-            });
+            setLoading(false);
+            return;
+        }
 
-            if (error) {
-                setErrorMessage(error.message);
-            } else {
-                setSuccessMessage(
-                    "Password updated successfully. You can now sign in with your new password."
-                );
-            }
+        const { error } = await supabase.auth.updateUser({
+            password: password,
+        });
+
+        if (error) {
+            setErrorMessage(error.message);
+        } else {
+            setSuccessMessage(
+                "Password updated successfully. You can now sign in with your new password."
+            );
         }
 
         setLoading(false);
+        if (!error) setTimeout(() => (window.location.href = "/auth"), 1000);
         return;
     };
 
