@@ -20,7 +20,7 @@ const Logo = () => {
                 aria-hidden="true"
                 width={50}
                 height={50}
-                className={styles.logo}
+                className={styles.img}
             />
         </Link>
     );
