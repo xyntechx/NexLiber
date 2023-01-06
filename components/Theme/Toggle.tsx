@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import styles from "./Theme.module.css";
 
 const Toggle = () => {
@@ -14,17 +13,11 @@ const Toggle = () => {
     return (
         <button
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-            title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+            aria-label={`Switch to ${theme === "dark" ? "Light" : "Dark"} Mode`}
+            title={`Switch to ${theme === "dark" ? "Light" : "Dark"} Mode`}
             className={styles.themeToggle}
         >
-            <Image
-                src={`/assets/${theme}/toggle.svg`}
-                alt={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-                aria-hidden="true"
-                width={30}
-                height={30}
-            />
+            Switch to {theme === "dark" ? "Light" : "Dark"} Mode
         </button>
     );
 };
