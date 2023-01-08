@@ -28,7 +28,7 @@ const Alert = ({
                 (errorMessage && errorMessage)}{" "}
             <button
                 aria-hidden={successMessage || errorMessage ? "false" : "true"}
-                aria-label={successMessage || errorMessage ? "Close alert" : ""}
+                aria-label={successMessage || errorMessage ? "Close Alert" : ""}
                 onClick={() => {
                     setSuccessMessage("");
                     setErrorMessage("");
