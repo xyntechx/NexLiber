@@ -93,6 +93,15 @@
     min-width: 200px;
 }
 
+.avatar {
+    transition: 0.15s;
+    border-radius: 50%;
+}
+
+.avatar:hover {
+    transform: scale(1.1);
+}
+
 @media (max-width: 700px) {
     .logoContainer {
         width: fit-content;

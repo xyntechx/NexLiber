@@ -1,5 +1,6 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { supabase } from "../../utils/supabase";
 import { useUser } from "@supabase/auth-helpers-react";
@@ -22,7 +23,9 @@ const Topnav = () => {
     const user = useUser();
 
     const [isSignedIn, setIsSignedIn] = useState(false);
+
     const [avatar_url, setAvatarUrl] = useState<string | null>();
+    const [avatarSrc, setAvatarSrc] = useState("");
 
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
@@ -35,7 +38,7 @@ const Topnav = () => {
                 .from("users")
                 .select("avatar_url")
                 .eq("id", user!.id);
-            if (data![0].avatar_url) setAvatarUrl(data![0].avatar_url);
+            setAvatarUrl(data![0].avatar_url);
         };
 
         if (user) {
@@ -43,6 +46,27 @@ const Topnav = () => {
             setIsSignedIn(true);
         }
     }, [user]);
+
+    useEffect(() => {
+        if (avatar_url) downloadImage(avatar_url);
+    }, [avatar_url]);
+
+    useEffect(() => {
+        window.addEventListener("avatarUpdate", () => {
+            if (avatar_url) downloadImage(avatar_url);
+        });
+    });
+
+    const downloadImage = async (path: string) => {
+        const { data, error } = await supabase.storage
+            .from("avatars")
+            .download(path);
+
+        if (!error) {
+            const url = URL.createObjectURL(data);
+            setAvatarSrc(url);
+        }
+    };
 
     const handleSignOut = async () => {
         const { error } = await supabase.auth.signOut();
@@ -98,7 +122,17 @@ const Topnav = () => {
                                     minWidth: "fit-content",
                                 }}
                             >
-                                {avatar_url ? <p>ada url</p> : <Profile />}
+                                {avatarSrc ? (
+                                    <Image
+                                        src={avatarSrc}
+                                        alt="Profile Picture"
+                                        width={50}
+                                        height={50}
+                                        className={styles.avatar}
+                                    />
+                                ) : (
+                                    <Profile width={50} height={50} />
+                                )}
                             </button>
                             <div
                                 className={styles.dropdownContent}
