@@ -19,7 +19,7 @@ const Footer = () => {
                 </Link>
             </div>
             <sub className={styles.sub}>
-                Copyright &copy; 2022 Nyx Audrey Angelo Iskandar
+                Copyright &copy; 2022-2023 Nyx Audrey Angelo Iskandar
             </sub>
         </footer>
     );
