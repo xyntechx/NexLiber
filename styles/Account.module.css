@@ -1,0 +1,135 @@
+.container {
+    padding: 1rem;
+    width: 80vw;
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.title,
+.redTitle {
+    font-size: 2rem;
+    font-weight: 800;
+    margin: 0;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.redTitle {
+    font-size: 1.2rem;
+    margin: 1rem 0;
+    color: #ef4444;
+    font-weight: 400;
+}
+
+.inputContainer {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    flex-direction: column;
+    width: 50%;
+    margin: 0.5rem;
+}
+
+.text,
+.dangerText {
+    font-size: 1rem;
+    font-weight: 400;
+    margin: 0.5rem 0;
+    text-align: center;
+}
+
+.dangerText {
+    text-align: left;
+}
+
+.link {
+    color: var(--color-theme-blur);
+    transition: 0.15s;
+}
+
+.link:hover {
+    color: var(--color-theme);
+    cursor: pointer;
+}
+
+.button,
+.redButton {
+    font-size: 1rem;
+    outline: none;
+    background: none;
+    cursor: pointer;
+    margin: 0;
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-theme);
+    color: var(--color-text);
+    transition: 0.15s;
+}
+
+.button:hover {
+    color: var(--color-theme);
+}
+
+.redButton {
+    border-color: #ef4444;
+    margin: 1rem 0;
+}
+
+.redButton:hover {
+    color: #ef4444;
+}
+
+.input {
+    outline: none;
+    background: none;
+    border: 1px solid var(--color-theme-blur);
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    width: 100%;
+    margin: 0;
+    margin-bottom: 0.5rem;
+    color: var(--color-text);
+    font-size: 1rem;
+}
+
+.input:focus {
+    border: 1px solid var(--color-theme);
+}
+
+.subContainer,
+.dangerContainer {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    flex-direction: column;
+    width: 50%;
+    height: fit-content;
+    margin-top: 2rem;
+}
+
+.dangerContainer {
+    border: 1px solid #ef4444;
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.avatar {
+    transition: 0.15s;
+    border-radius: 50%;
+}
+
+.avatar:hover {
+    transform: scale(1.1);
+}
+
+@media (max-width: 700px) {
+    .inputContainer,
+    .subContainer,
+    .dangerContainer {
+        width: 90%;
+    }
+}
