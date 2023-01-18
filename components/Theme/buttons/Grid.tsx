@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import styles from "../Theme.module.css";
 
 const GridButton = () => {
     const [theme, setTheme] = useState(document.body.dataset.theme!);
