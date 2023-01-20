@@ -33,16 +33,11 @@
     margin: 0.5rem;
 }
 
-.text,
-.dangerText {
+.text {
     font-size: 1rem;
     font-weight: 400;
     margin: 0.5rem 0;
     text-align: center;
-}
-
-.dangerText {
-    text-align: left;
 }
 
 .link {
@@ -103,18 +98,19 @@
 .subContainer,
 .dangerContainer {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
+    border: 1px solid var(--color-theme);
     justify-content: center;
     flex-direction: column;
     width: 50%;
     height: fit-content;
     margin-top: 2rem;
+    border-radius: 0.5rem;
+    padding: 1rem;
 }
 
 .dangerContainer {
     border: 1px solid #ef4444;
-    border-radius: 0.5rem;
-    padding: 1rem;
 }
 
 .avatar {
@@ -127,6 +123,10 @@
 }
 
 @media (max-width: 700px) {
+    .container {
+        width: 90vw;
+    }
+
     .inputContainer,
     .subContainer,
     .dangerContainer {

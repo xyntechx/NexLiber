@@ -117,11 +117,8 @@ const Account = () => {
         const { data, error } = await supabase.storage
             .from("avatars")
             .download(path);
-        
-        console.log("error", error)
 
         if (!error) {
-            console.log("no error")
             const url = URL.createObjectURL(data);
             setAvatarSrc(url);
         }
@@ -291,10 +288,7 @@ const Account = () => {
                     </button>
 
                     <div className={styles.subContainer}>
-                        <p
-                            className={styles.text}
-                            style={{ textAlign: "left" }}
-                        >
+                        <p className={styles.text}>
                             You are currently under the{" "}
                             <Link
                                 href="/docs#subscription"
@@ -310,10 +304,7 @@ const Account = () => {
                     </div>
 
                     <div className={styles.subContainer}>
-                        <p
-                            className={styles.text}
-                            style={{ textAlign: "left" }}
-                        >
+                        <p className={styles.text}>
                             For your safety, we recommend that you change your
                             password every 3 months.
                         </p>
@@ -327,7 +318,7 @@ const Account = () => {
 
                     <div className={styles.dangerContainer}>
                         <h2 className={styles.redTitle}>Danger Zone</h2>
-                        <p className={styles.dangerText}>
+                        <p className={styles.text}>
                             Please read the{" "}
                             <Link
                                 href="/docs#delete-account"
