@@ -109,6 +109,10 @@
 }
 
 @media (max-width: 700px) {
+    .container {
+        width: 90vw;
+    }
+
     .inputContainer,
     .providerContainer {
         width: 90%;
