@@ -5,6 +5,8 @@ Create to Learn.
 - Next.js
 - Supabase
 - Stripe
+- Storyblok
+- SendGrid
 
 ## 🔨 Usage
 ```bash
