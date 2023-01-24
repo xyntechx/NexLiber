@@ -27,15 +27,15 @@ const Account = () => {
     const [fullname, setFullname] = useState("");
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
-    const [isSubscribed, setIsSubscribed] = useState("");
     const [avatar_url, setAvatarUrl] = useState("");
     const [avatarSrc, setAvatarSrc] = useState("");
+    const [stripeID, setStripeID] = useState("");
 
     useEffect(() => {
         const loadData = async () => {
             const { data } = await supabase
                 .from("users")
-                .select("full_name, username, email, avatar_url, is_subscribed")
+                .select("full_name, username, email, avatar_url, stripe_acc_id")
                 .eq("id", user!.id);
             setData(data);
         };
@@ -49,7 +49,7 @@ const Account = () => {
             setUsername(data[0].username);
             setEmail(data[0].email);
             setAvatarUrl(data[0].avatar_url);
-            setIsSubscribed(data[0].is_subscribed);
+            setStripeID(data[0].stripe_acc_id);
         }
     }, [data]);
 
@@ -87,9 +87,24 @@ const Account = () => {
         const { error } = await supabase.from("users").upsert(updates);
 
         if (error) {
-            setErrorMessage(
-                "An error has occurred. Please ensure all fields are filled in appropriately."
-            );
+            if (
+                error.message ===
+                'duplicate key value violates unique constraint "users_username_key"'
+            )
+                setErrorMessage(
+                    `The username ${username} has been taken. Please choose another username.`
+                );
+            else if (
+                error.message ===
+                'duplicate key value violates unique constraint "users_email_key"'
+            )
+                setErrorMessage(
+                    `The email ${email} has been taken. Please choose another email.`
+                );
+            else
+                setErrorMessage(
+                    "An error has occurred. Please ensure all fields are filled in appropriately."
+                );
         } else {
             setSuccessMessage(
                 "Profile updated! Teleporting you to the Library..."
@@ -102,12 +117,34 @@ const Account = () => {
         return;
     };
 
+    const handleSupabaseDelete = async () => {
+        // TODO: delete user from users table
+        // TODO: update all of user's Workbooks to have creator_id of null
+        // TODO: redirect to homepage
+    };
+
     const handleDeleteAccount = async () => {
         setDeleteLoading(true);
 
-        // TODO: Write logic here (See Notion "Delete Account button in /account")
+        const postData = async () => {
+            const data = {
+                stripe_id: stripeID,
+            };
 
-        setDeleteLoading(false);
+            const response = await fetch("/api/stripe-acc/delete", {
+                method: "POST",
+                body: JSON.stringify(data),
+            });
+
+            return response.json();
+        };
+
+        postData().then((data) => {
+            if (data.deleted) handleSupabaseDelete();
+            else setErrorMessage("An error has occurred. Please try again.");
+            setDeleteLoading(false);
+        });
+
         return;
     };
 
@@ -286,22 +323,6 @@ const Account = () => {
                     >
                         {updateLoading ? "Loading..." : "Update Profile"}
                     </button>
-
-                    <div className={styles.subContainer}>
-                        <p className={styles.text}>
-                            You are currently under the{" "}
-                            <Link
-                                href="/docs#subscription"
-                                className={styles.link}
-                            >
-                                {isSubscribed ? "Complete" : "Lite"}
-                            </Link>{" "}
-                            plan.
-                        </p>
-                        <Link href="/subscription" className={styles.button}>
-                            Manage Subscription
-                        </Link>
-                    </div>
 
                     <div className={styles.subContainer}>
                         <p className={styles.text}>
