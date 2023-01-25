@@ -21,7 +21,7 @@ const Alert = ({
                 display: successMessage || errorMessage ? "flex" : "none",
                 backgroundColor:
                     (successMessage && "#22c55e") ||
-                    (errorMessage && "#ef4444"),
+                    (errorMessage && "#ef4444") || "transparent"
             }}
         >
             {(successMessage && successMessage) ||
