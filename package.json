@@ -23,7 +23,13 @@
         "next": "^13.1.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
+        "react-markdown": "^8.0.5",
+        "react-syntax-highlighter": "^15.5.0",
+        "remark-gfm": "^3.0.1",
         "stripe": "^11.3.0",
         "typescript": "4.9.4"
+    },
+    "devDependencies": {
+        "@types/react-syntax-highlighter": "^15.5.6"
     }
 }
