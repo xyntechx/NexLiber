@@ -29,10 +29,10 @@
 }
 
 .contents {
-    width: fit-content;
+    width: 30%;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: stretch;
     flex-direction: column;
 }
 
@@ -40,7 +40,7 @@
     width: 100%;
     height: fit-content;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     flex-direction: row;
     column-gap: 1rem;
@@ -66,6 +66,10 @@
     margin: 0;
     font-weight: 400;
     cursor: pointer;
+    width: 100%;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     transition: 0.15s;
 }
 
@@ -74,7 +78,7 @@
 }
 
 .workbookContainer {
-    width: fit-content;
+    width: 60%;
     flex: 1;
     display: flex;
     justify-content: flex-start;
@@ -82,11 +86,20 @@
     flex-direction: column;
 }
 
-.title {
+.title,
+.editorWorkbookTitle {
     font-size: 2rem;
     font-weight: 800;
     margin: 0;
     text-align: left;
+}
+
+.editorWorkbookTitle {
+    font-size: 1.2rem;
+    width: 50%;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .text {
@@ -117,6 +130,8 @@
 
 .button,
 .buttonGreen,
+.greenButton,
+.blueButton,
 .toggle {
     font-size: 1rem;
     outline: none;
@@ -133,7 +148,6 @@
     align-items: center;
     justify-content: center;
     padding: 0.5rem;
-    padding-right: 1rem;
     column-gap: 0.5rem;
 }
 
@@ -142,6 +156,14 @@
     padding: 0.5rem;
     color: #22c55e;
     cursor: text;
+}
+
+.greenButton {
+    border-color: #22c55e;
+}
+
+.blueButton {
+    border-color: #0ea5e9;
 }
 
 .toggle {
@@ -153,6 +175,28 @@
 .button:hover,
 .toggle:hover {
     color: var(--color-theme) !important;
+}
+
+.greenButton:hover {
+    color: #22c55e;
+}
+
+.blueButton:hover {
+    color: #0ea5e9;
+}
+
+.editorArea {
+    min-width: 100%;
+    max-width: 100%;
+    min-height: 60vh;
+    border: none;
+    border-top: 1px solid var(--color-theme);
+    border-bottom: 1px solid var(--color-theme);
+    background: none;
+    outline: none;
+    color: var(--color-text);
+    padding: 0.5rem 0;
+    font-size: 1rem;
 }
 
 @media (max-width: 700px) {
@@ -169,6 +213,16 @@
         text-align: center;
     }
 
+    .contents,
+    .workbookContainer,
+    .editorWorkbookTitle {
+        width: 100%;
+    }
+
+    .toggles {
+        justify-content: center;
+    }
+
     .buttons {
         justify-content: center;
         align-items: stretch;
@@ -180,9 +234,5 @@
     .mainDiv {
         flex-direction: column;
         row-gap: 2rem;
-    }
-
-    .workbookContainer {
-        width: 100%;
     }
 }
