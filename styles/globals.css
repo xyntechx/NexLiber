@@ -37,3 +37,7 @@ a {
 * {
     box-sizing: border-box;
 }
+
+textarea {
+    font-family: "Inter", sans-serif;
+}
