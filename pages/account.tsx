@@ -118,9 +118,50 @@ const Account = () => {
     };
 
     const handleSupabaseDelete = async () => {
-        // TODO: delete user from users table
-        // TODO: update all of user's Workbooks to have creator_id of null
-        // TODO: redirect to homepage
+        const { data } = await supabase
+            .from("workbooks")
+            .select("id")
+            .eq("creator_id", user!.id);
+
+        let updates = [];
+
+        for (let i = 0; i < data!.length; i++) {
+            updates.push({
+                id: data![i].id,
+                creator_id: null,
+            });
+        }
+
+        const { error: workbookError } = await supabase
+            .from("workbooks")
+            .upsert(updates);
+
+        const { error: avatarError } = await supabase.storage
+            .from("avatars")
+            .remove([avatar_url]);
+
+        const { error: userError } = await supabase
+            .from("users")
+            .delete()
+            .eq("id", user!.id);
+
+        if (userError || workbookError || avatarError) {
+            setErrorMessage("An error has occurred. Please try again.");
+            setDeleteLoading(false);
+            return;
+        }
+
+        const { error } = await supabase.auth.signOut();
+
+        if (error) {
+            setErrorMessage("An error has occurred. Please try again.");
+            setDeleteLoading(false);
+            return;
+        }
+
+        setSuccessMessage("Your account has been successfully deleted.");
+        setDeleteLoading(false);
+        return;
     };
 
     const handleDeleteAccount = async () => {
