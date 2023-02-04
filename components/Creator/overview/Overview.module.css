@@ -1,0 +1,136 @@
+.topContainer,
+.mainContainer,
+.actionContainer,
+.feedbackContainer {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: row;
+    column-gap: 1rem;
+}
+
+.topContainer {
+    justify-content: space-between;
+}
+
+.mainContainer {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.actionContainer {
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+    row-gap: 0.5rem;
+}
+
+.feedbackContainer {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.feedback {
+    width: 100%;
+    height: fit-content;
+    background-color: var(--color-theme-blur);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+}
+
+.title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    margin: 0;
+    text-align: left;
+    width: 70%;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.text,
+.sub {
+    font-size: 1rem;
+    font-weight: 400;
+    margin: 0.5rem 0;
+    text-align: left;
+}
+
+.sub {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    font-size: 0.8rem;
+    text-align: right;
+}
+
+.link {
+    color: var(--color-theme-blur);
+    transition: 0.15s;
+}
+
+.link:hover {
+    color: var(--color-theme);
+    cursor: pointer;
+}
+
+.buttons {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0;
+    column-gap: 0.5rem;
+}
+
+.button,
+.redButton,
+.blueButton {
+    font-size: 1rem;
+    outline: none;
+    background: none;
+    cursor: pointer;
+    margin: 0;
+    min-width: 90px;
+    text-align: center;
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-theme);
+    color: var(--color-text);
+    transition: 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+}
+
+.redButton {
+    border-color: #ef4444;
+}
+
+.blueButton {
+    border-color: #0ea5e9;
+}
+
+.button:hover {
+    color: var(--color-theme);
+}
+
+.redButton:hover {
+    color: #ef4444;
+}
+
+.blueButton:hover {
+    color: #0ea5e9;
+}
+
+@media (max-width: 700px) {
+    .topContainer {
+        justify-content: center;
+    }
+}
