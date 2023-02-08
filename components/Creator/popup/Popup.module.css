@@ -77,6 +77,15 @@
     text-align: center;
 }
 
+.sub {
+    font-size: 0.8rem;
+    color: var(--color-text-blur);
+    margin: 0;
+    padding-left: 0.5rem;
+    width: 100%;
+    text-align: left;
+}
+
 .button {
     font-size: 1rem;
     outline: none;
@@ -98,6 +107,16 @@
 
 .button:hover {
     color: var(--color-theme) !important;
+}
+
+.link {
+    color: var(--color-theme-blur);
+    transition: 0.15s;
+}
+
+.link:hover {
+    color: var(--color-theme);
+    cursor: pointer;
 }
 
 @media (max-width: 700px) {
