@@ -298,6 +298,7 @@ const Creator = () => {
                                                     style={{
                                                         margin: "0",
                                                         fontStyle: "italic",
+                                                        color: "var(--color-text-blur)",
                                                     }}
                                                 >
                                                     No Workbooks found
@@ -333,6 +334,7 @@ const Creator = () => {
                                                     style={{
                                                         margin: "0",
                                                         fontStyle: "italic",
+                                                        color: "var(--color-text-blur)",
                                                     }}
                                                 >
                                                     No Workbooks found
@@ -373,6 +375,7 @@ const Creator = () => {
                                                     style={{
                                                         margin: "0",
                                                         fontStyle: "italic",
+                                                        color: "var(--color-text-blur)",
                                                     }}
                                                 >
                                                     No Workbooks found
@@ -408,6 +411,7 @@ const Creator = () => {
                                                     style={{
                                                         margin: "0",
                                                         fontStyle: "italic",
+                                                        color: "var(--color-text-blur)",
                                                     }}
                                                 >
                                                     No Workbooks found
@@ -426,7 +430,13 @@ const Creator = () => {
                                     setErrorMessage={setErrorMessage}
                                 />
                             ) : (
-                                <p style={{ margin: 0, fontStyle: "italic" }}>
+                                <p
+                                    style={{
+                                        margin: 0,
+                                        fontStyle: "italic",
+                                        color: "var(--color-text-blur)",
+                                    }}
+                                >
                                     Please select a Workbook
                                 </p>
                             )}
