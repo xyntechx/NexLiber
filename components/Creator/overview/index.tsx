@@ -109,13 +109,11 @@ const WorkbookOverview = ({
         if (error) {
             setErrorMessage("An error has occurred. Please try again.");
             setLoading(false);
-            return;
+        } else {
+            setSuccessMessage("Workbook successfully deleted.");
+            setLoading(false);
+            if (!error) setTimeout(() => window.location.reload(), 1000);
         }
-
-        setSuccessMessage("Workbook created! Teleporting you to the Editor...");
-        setLoading(false);
-        window.location.reload();
-
         return;
     };
 
