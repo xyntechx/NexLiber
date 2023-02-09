@@ -38,6 +38,7 @@ a {
     box-sizing: border-box;
 }
 
-textarea {
+textarea,
+code {
     font-family: "Inter", sans-serif;
 }
