@@ -248,9 +248,10 @@ const Creator = () => {
                                         color: isViewDraft
                                             ? "var(--color-theme)"
                                             : "var(--color-text)",
+                                        paddingLeft: "1rem",
                                     }}
                                 >
-                                    Draft Workbooks
+                                    Draft
                                 </button>
                                 <button
                                     onClick={() => setIsViewDraft(false)}
@@ -261,7 +262,7 @@ const Creator = () => {
                                             : "var(--color-text)",
                                     }}
                                 >
-                                    Published Workbooks
+                                    Published
                                 </button>
                             </div>
                             <div className={styles.workbookTitles}>
@@ -294,12 +295,9 @@ const Creator = () => {
                                         ) : (
                                             <>
                                                 <p
-                                                    className={styles.text}
-                                                    style={{
-                                                        margin: "0",
-                                                        fontStyle: "italic",
-                                                        color: "var(--color-text-blur)",
-                                                    }}
+                                                    className={
+                                                        styles.disclaimer
+                                                    }
                                                 >
                                                     No Workbooks found
                                                 </p>
@@ -330,12 +328,9 @@ const Creator = () => {
                                         ) : (
                                             <>
                                                 <p
-                                                    className={styles.text}
-                                                    style={{
-                                                        margin: "0",
-                                                        fontStyle: "italic",
-                                                        color: "var(--color-text-blur)",
-                                                    }}
+                                                    className={
+                                                        styles.disclaimer
+                                                    }
                                                 >
                                                     No Workbooks found
                                                 </p>
@@ -371,12 +366,9 @@ const Creator = () => {
                                         ) : (
                                             <>
                                                 <p
-                                                    className={styles.text}
-                                                    style={{
-                                                        margin: "0",
-                                                        fontStyle: "italic",
-                                                        color: "var(--color-text-blur)",
-                                                    }}
+                                                    className={
+                                                        styles.disclaimer
+                                                    }
                                                 >
                                                     No Workbooks found
                                                 </p>
@@ -407,12 +399,9 @@ const Creator = () => {
                                         ) : (
                                             <>
                                                 <p
-                                                    className={styles.text}
-                                                    style={{
-                                                        margin: "0",
-                                                        fontStyle: "italic",
-                                                        color: "var(--color-text-blur)",
-                                                    }}
+                                                    className={
+                                                        styles.disclaimer
+                                                    }
                                                 >
                                                     No Workbooks found
                                                 </p>
