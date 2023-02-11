@@ -230,7 +230,7 @@ const WorkbookOverview = ({
                                                 Please add your project source
                                                 code to{" "}
                                                 <Link
-                                                    href="https://github.com/xyntechx/NexLiber-Projects"
+                                                    href="https://github.com/teamxynlab/NexLiber-Projects"
                                                     target="_blank"
                                                     className={styles.link}
                                                 >
