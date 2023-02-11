@@ -43,7 +43,6 @@
     justify-content: flex-start;
     align-items: center;
     flex-direction: row;
-    column-gap: 1rem;
     margin-bottom: 1rem;
 }
 
@@ -61,7 +60,8 @@
     border-radius: 0.5rem;
 }
 
-.workbookTitle {
+.workbookTitle,
+.typeLabel {
     font-size: 1rem;
     margin: 0;
     font-weight: 400;
@@ -75,6 +75,30 @@
 
 .workbookTitle:hover {
     font-weight: 800;
+}
+
+.text,
+.disclaimer {
+    font-size: 1rem;
+    font-weight: 400;
+    margin: 0.5rem 0;
+    text-align: center;
+}
+
+.disclaimer {
+    margin: 0;
+    text-align: left;
+    font-style: italic;
+    color: var(--color-text-blur);
+    width: 100%;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.typeLabel {
+    text-decoration: underline;
+    cursor: text;
 }
 
 .workbookContainer {
@@ -96,17 +120,10 @@
 
 .editorWorkbookTitle {
     font-size: 1.2rem;
-    width: 50%;
+    width: 100%;
     overflow-x: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-}
-
-.text {
-    font-size: 1rem;
-    font-weight: 400;
-    margin: 0.5rem 0;
-    text-align: center;
 }
 
 .link {
@@ -170,6 +187,8 @@
     border: none;
     border-radius: 0;
     padding: 0;
+    justify-content: flex-start;
+    font-weight: 800;
 }
 
 .button:hover,
@@ -183,6 +202,31 @@
 
 .blueButton:hover {
     color: #0ea5e9;
+}
+
+.workbookDetails {
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    row-gap: 0.5rem;
+}
+
+.input {
+    outline: none;
+    background: none;
+    border: 1px solid var(--color-theme-blur);
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    width: 100%;
+    margin: 0;
+    color: var(--color-text);
+    font-size: 1rem;
+}
+
+.input:focus {
+    border: 1px solid var(--color-theme);
 }
 
 .editorArea {
