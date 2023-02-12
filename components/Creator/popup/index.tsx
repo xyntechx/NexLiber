@@ -1,10 +1,11 @@
-import styles from "./Popup.module.css";
 import { useRef, useState } from "react";
 import { storyblokInit, apiPlugin, getStoryblokApi } from "@storyblok/react";
 import { supabase } from "../../../utils/supabase";
 import { useUser } from "@supabase/auth-helpers-react";
 import Alert from "../../Alert";
 import workbookFields from "../../../utils/workbookFields";
+import Link from "next/link";
+import styles from "./Popup.module.css";
 
 interface Props {
     setShowCreatePopup: (showCreatePopup: boolean) => void;
@@ -42,19 +43,6 @@ const CreateWorkbookPopup = ({ setShowCreatePopup }: Props) => {
             return;
         }
 
-        if (field === "Others")
-            handleBackend(title, description, customField, type);
-        else handleBackend(title, description, field, type);
-
-        return;
-    };
-
-    const handleBackend = async (
-        title: string,
-        description: string,
-        field: string,
-        type: string
-    ) => {
         const { count, error } = await supabase
             .from("workbooks")
             .select("lower_title", { count: "exact", head: true })
@@ -71,6 +59,44 @@ const CreateWorkbookPopup = ({ setShowCreatePopup }: Props) => {
             slug = `${title.toLowerCase().split(" ").join("-")}`;
         else slug = `${title.toLowerCase().split(" ").join("-")}-${count + 1}`;
 
+        if (type === "Premium") {
+            const postData = async () => {
+                const data = {
+                    title,
+                    description,
+                    field: field === "Others" ? customField : field,
+                    type,
+                    slug,
+                    lower_title: title.toLowerCase(),
+                    creator_id: user!.id,
+                };
+
+                const response = await fetch("/api/stripe-payment/creator", {
+                    method: "POST",
+                    body: JSON.stringify(data),
+                });
+
+                return response.json();
+            };
+
+            postData().then((data) => {
+                if (data.url) window.location.href = data.url;
+            });
+        } else {
+            if (field === "Others")
+                handleBackend(title, description, customField, type, slug);
+            else handleBackend(title, description, field, type, slug);
+        }
+        return;
+    };
+
+    const handleBackend = async (
+        title: string,
+        description: string,
+        field: string,
+        type: string,
+        slug: string
+    ) => {
         await fetch("https://mapi.storyblok.com/v1/spaces/192717/stories", {
             method: "POST",
             headers: {
@@ -83,34 +109,9 @@ const CreateWorkbookPopup = ({ setShowCreatePopup }: Props) => {
                     slug: slug,
                     parent_id: 251853159,
                     content: {
-                        component: "page",
-                        body: [
-                            {
-                                component: "content",
-                                title: title,
-                                markdown: "",
-                            },
-                            {
-                                component: "quiz",
-                                question: "What is your name?",
-                                options: {
-                                    nyxkey: "nyx",
-                                    audreykey: "audrey",
-                                    angelokey: "angelo",
-                                    iskandarkey: "iskandar",
-                                },
-                            },
-                            {
-                                component: "quiz",
-                                question: "Again, what is your name?",
-                                options: {
-                                    nyxkey: "nyx",
-                                    audreykey: "audrey",
-                                    angelokey: "angelo",
-                                    iskandarkey: "iskandar",
-                                },
-                            },
-                        ],
+                        component: "content",
+                        title: title,
+                        markdown: "",
                     },
                 },
                 publish: 1,
@@ -214,6 +215,9 @@ const CreateWorkbookPopup = ({ setShowCreatePopup }: Props) => {
                         type="text"
                         className={styles.input}
                     />
+                    <sub className={styles.sub}>
+                        Title cannot be edited once Workbook is created.
+                    </sub>
 
                     <label htmlFor="description" className={styles.inputlabel}>
                         Description
@@ -266,6 +270,14 @@ const CreateWorkbookPopup = ({ setShowCreatePopup }: Props) => {
                         <option value="Free">Free</option>
                         <option value="Premium">Premium</option>
                     </select>
+                    <sub className={styles.sub}>
+                        Type cannot be edited once Workbook is created. Please
+                        read the{" "}
+                        <Link href="/docs#workbook" className={styles.link}>
+                            docs
+                        </Link>{" "}
+                        before choosing your Workbook&apos;s type.
+                    </sub>
 
                     <button
                         onClick={() => createWorkbook()}
