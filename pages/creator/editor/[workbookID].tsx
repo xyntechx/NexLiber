@@ -50,6 +50,7 @@ const Editor = () => {
     const [submitLoading, setSubmitLoading] = useState(false);
     const [needSave, setNeedSave] = useState(false);
     const [needSubmit, setNeedSubmit] = useState(false);
+    const [fieldChangeTrigger, setFieldChangeTrigger] = useState(0); // only used as toggle
 
     storyblokInit({
         accessToken: process.env.NEXT_PUBLIC_STORYBLOK_PUBLIC_TOKEN,
@@ -120,6 +121,13 @@ const Editor = () => {
         if (addedProject && content) setNeedSubmit(true);
         else setNeedSubmit(false);
     }, [addedProject, content]);
+
+    useEffect(() => {
+        if (fieldChangeTrigger) {
+            if (field === "Others") setNeedSave(false);
+            else setNeedSave(true);
+        }
+    }, [fieldChangeTrigger]);
 
     useEffect(() => {
         const loadWorkbookContent = async () => {
@@ -328,11 +336,17 @@ const Editor = () => {
                             />
                             <select
                                 id="field"
-                                defaultValue={field}
+                                defaultValue={
+                                    workbookFields.includes(field)
+                                        ? field
+                                        : "Others"
+                                }
                                 className={styles.input}
                                 onChange={(e) => {
                                     setField(e.target.value);
-                                    setNeedSave(true);
+                                    setFieldChangeTrigger(
+                                        fieldChangeTrigger + 1
+                                    );
                                 }}
                             >
                                 {workbookFields.map((field) => (
@@ -341,17 +355,25 @@ const Editor = () => {
                                     </option>
                                 ))}
                             </select>
-                            <input
-                                onChange={(e) => setField(e.target.value)}
-                                placeholder="Custom Field"
-                                id="field"
-                                type="text"
-                                className={styles.input}
-                                style={{
-                                    display:
-                                        field === "Others" ? "block" : "none",
-                                }}
-                            />
+                            {(!workbookFields.includes(field) ||
+                                field === "Others") && (
+                                <input
+                                    value={field === "Others" ? "" : field}
+                                    onChange={(e) => {
+                                        if (e.target.value) {
+                                            setField(e.target.value);
+                                            setNeedSave(true);
+                                        } else {
+                                            setField("");
+                                            setNeedSave(false);
+                                        }
+                                    }}
+                                    placeholder="Custom Field"
+                                    id="field"
+                                    type="text"
+                                    className={styles.input}
+                                />
+                            )}
                         </div>
                         <div className={styles.buttons}>
                             <button
