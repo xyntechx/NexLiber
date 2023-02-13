@@ -121,7 +121,7 @@ const Editor = () => {
             if (field === "Others") setNeedSave(false);
             else setNeedSave(true);
         }
-    }, [fieldChangeTrigger]);
+    }, [fieldChangeTrigger, field]);
 
     useEffect(() => {
         const loadWorkbookContent = async () => {
