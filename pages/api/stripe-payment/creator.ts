@@ -16,7 +16,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
                 quantity: 1,
             },
         ],
-        success_url: `${process.env.NEXT_PUBLIC_ROOT_URL}/creator`,
+        success_url: `${process.env.NEXT_PUBLIC_ROOT_URL}/creator/editor/${body.slug}`,
         cancel_url: `${process.env.NEXT_PUBLIC_ROOT_URL}/creator/error`,
         payment_intent_data: { metadata: body },
     });
