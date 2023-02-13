@@ -145,7 +145,7 @@ const WorkbookOverview = ({
                         ) : (
                             <div className={styles.buttons}>
                                 <Link
-                                    href={`/creator/editor/${workbook.storyblok_id}`}
+                                    href={`/creator/editor/${workbook.slug}`}
                                     className={styles.blueButton}
                                 >
                                     Edit
