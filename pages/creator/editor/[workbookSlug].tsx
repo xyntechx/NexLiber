@@ -4,23 +4,19 @@ import { useEffect, useState } from "react";
 import { supabase } from "../../../utils/supabase";
 import { useUser } from "@supabase/auth-helpers-react";
 import { storyblokInit, apiPlugin, getStoryblokApi } from "@storyblok/react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import oneDark from "react-syntax-highlighter/dist/cjs/styles/prism/one-dark";
 import Alert from "../../../components/Alert";
 import Link from "next/link";
 import workbookFields from "../../../utils/workbookFields";
 import styles from "../../../styles/Creator.module.css";
-import previewStyles from "../../../styles/Workbook.module.css";
+import WorkbookContent from "../../../components/WorkbookContent";
 
 const Editor = () => {
     const user = useUser();
 
     const router = useRouter();
 
-    // Workbook data
-    const { workbookID } = router.query; // storyblok_id
+    // Workbook Data
+    const { workbookSlug } = router.query;
     const [workbookData, setWorkbookData] = useState<any[] | null>();
     const [supabaseID, setSupabaseID] = useState("");
     const [title, setTitle] = useState("");
@@ -29,10 +25,9 @@ const Editor = () => {
     const [content, setContent] = useState("");
     const [creatorID, setCreatorID] = useState("");
     const [storyblokNumID, setStoryblokNumID] = useState<number>();
-    const [slug, setSlug] = useState("");
     const [addedProject, setAddedProject] = useState<boolean>();
 
-    // User data
+    // User Data
     const [completeUserData, setCompleteUserData] = useState(false);
     const [userData, setUserData] = useState<any[] | null>();
     const [fullname, setFullname] = useState("");
@@ -62,14 +57,14 @@ const Editor = () => {
             const { data } = await supabase
                 .from("workbooks")
                 .select(
-                    "id, title, description, field, creator_id, storyblok_num_id, slug, added_project"
+                    "id, title, description, field, creator_id, storyblok_num_id, added_project"
                 )
-                .eq("storyblok_id", workbookID);
+                .eq("slug", workbookSlug);
             setWorkbookData(data);
         };
 
-        if (workbookID) loadWorkbookData();
-    }, [workbookID]);
+        if (workbookSlug) loadWorkbookData();
+    }, [workbookSlug]);
 
     useEffect(() => {
         const loadUserData = async () => {
@@ -91,7 +86,6 @@ const Editor = () => {
             setField(workbookData[0].field);
             setCreatorID(workbookData[0].creator_id);
             setStoryblokNumID(workbookData[0].storyblok_num_id);
-            setSlug(workbookData[0].slug);
             setAddedProject(workbookData[0].added_project);
         }
     }, [workbookData]);
@@ -133,14 +127,14 @@ const Editor = () => {
         const loadWorkbookContent = async () => {
             const storyblokApi = getStoryblokApi();
             const { data } = await storyblokApi.get(
-                `cdn/stories/draft/${slug}`,
+                `cdn/stories/${workbookSlug}`,
                 {}
             );
             setContent(data.story.content.markdown);
         };
 
-        if (slug) loadWorkbookContent();
-    }, [slug]);
+        if (workbookSlug) loadWorkbookContent();
+    }, [workbookSlug]);
 
     useEffect(() => {
         const checkStripeAcc = () => {
@@ -188,8 +182,7 @@ const Editor = () => {
                 body: JSON.stringify({
                     story: {
                         name: title,
-                        slug: slug,
-                        parent_id: 251853159,
+                        slug: workbookSlug,
                         content: {
                             component: "content",
                             title: title,
@@ -446,50 +439,7 @@ const Editor = () => {
                             className={styles.editorArea}
                         />
                     ) : (
-                        <div
-                            className={previewStyles.content}
-                            style={{ border: "none" }}
-                        >
-                            <ReactMarkdown
-                                remarkPlugins={[remarkGfm]}
-                                components={{
-                                    code({
-                                        node,
-                                        inline,
-                                        className,
-                                        children,
-                                        style,
-                                        ...props
-                                    }) {
-                                        const match = /language-(\w+)/.exec(
-                                            className || ""
-                                        );
-                                        return !inline && match ? (
-                                            <SyntaxHighlighter
-                                                style={oneDark}
-                                                language={match[1]}
-                                                PreTag="div"
-                                                {...props}
-                                            >
-                                                {String(children).replace(
-                                                    /\n$/,
-                                                    ""
-                                                )}
-                                            </SyntaxHighlighter>
-                                        ) : (
-                                            <code
-                                                className={className}
-                                                {...props}
-                                            >
-                                                {children}
-                                            </code>
-                                        );
-                                    },
-                                }}
-                            >
-                                {content}
-                            </ReactMarkdown>
-                        </div>
+                        <WorkbookContent {...{ content }} />
                     )}
                 </section>
             ) : (
