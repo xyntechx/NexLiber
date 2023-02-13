@@ -26,6 +26,7 @@ const Topnav = () => {
 
     const [avatar_url, setAvatarUrl] = useState<string | null>();
     const [avatarSrc, setAvatarSrc] = useState("");
+    const [isAdmin, setIsAdmin] = useState(false);
 
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
@@ -36,9 +37,10 @@ const Topnav = () => {
         const loadData = async () => {
             const { data } = await supabase
                 .from("users")
-                .select("avatar_url")
+                .select("avatar_url, is_admin")
                 .eq("id", user!.id);
             setAvatarUrl(data![0].avatar_url);
+            setIsAdmin(data![0].is_admin);
         };
 
         if (user) {
@@ -143,9 +145,21 @@ const Topnav = () => {
                                 <Link href="/account" className={styles.action}>
                                     My Account
                                 </Link>
-                                <Link href="/creator" className={styles.action}>
-                                    Creator Dashboard
-                                </Link>
+                                {isAdmin ? (
+                                    <Link
+                                        href="/admin"
+                                        className={styles.action}
+                                    >
+                                        Admin Dashboard
+                                    </Link>
+                                ) : (
+                                    <Link
+                                        href="/creator"
+                                        className={styles.action}
+                                    >
+                                        Creator Dashboard
+                                    </Link>
+                                )}
                                 <Toggle />
                                 <button
                                     onClick={() => {
