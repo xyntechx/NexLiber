@@ -107,7 +107,6 @@ const CreateWorkbookPopup = ({ setShowCreatePopup }: Props) => {
                 story: {
                     name: title,
                     slug: slug,
-                    parent_id: 251853159,
                     content: {
                         component: "content",
                         title: title,
@@ -137,10 +136,7 @@ const CreateWorkbookPopup = ({ setShowCreatePopup }: Props) => {
         type: string
     ) => {
         const storyblokApi = getStoryblokApi();
-        const { data } = await storyblokApi.get(
-            `cdn/stories/draft/${slug}`,
-            {}
-        );
+        const { data } = await storyblokApi.get(`cdn/stories/${slug}`, {});
 
         const { error } = await supabase.from("workbooks").insert({
             title,
@@ -163,7 +159,7 @@ const CreateWorkbookPopup = ({ setShowCreatePopup }: Props) => {
         setSuccessMessage("Workbook created! Teleporting you to the Editor...");
         setLoading(false);
         setTimeout(
-            () => (window.location.href = `/creator/editor/${data.story.uuid}`),
+            () => (window.location.href = `/creator/editor/${slug}`),
             1000
         );
 

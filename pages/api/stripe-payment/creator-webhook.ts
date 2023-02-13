@@ -38,7 +38,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 story: {
                     name: data.title,
                     slug: data.slug,
-                    parent_id: 251853159,
                     content: {
                         component: "content",
                         title: data.title,
@@ -53,7 +52,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
         const storyblokApi = getStoryblokApi();
         const { data: storyblokData } = await storyblokApi.get(
-            `cdn/stories/draft/${data.slug}`,
+            `cdn/stories/${data.slug}`,
             {}
         );
 
