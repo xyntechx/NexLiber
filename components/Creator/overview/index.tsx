@@ -277,6 +277,10 @@ const WorkbookOverview = ({
                                                             className={
                                                                 styles.text
                                                             }
+                                                            style={{
+                                                                whiteSpace:
+                                                                    "pre",
+                                                            }}
                                                         >
                                                             {feedback.content}
                                                         </p>
