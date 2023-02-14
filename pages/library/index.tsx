@@ -6,7 +6,8 @@ import CreateButton from "../../components/Theme/buttons/Create";
 import SearchButton from "../../components/Theme/buttons/Search";
 import Link from "next/link";
 import styles from "../../styles/Library.module.css";
-import { convertTZ, simplifyDate } from "../../utils/datetime";
+import Card from "../../components/Library/card";
+import Search from "../../components/Library/search";
 
 interface WorkbookProps {
     id: string;
@@ -38,7 +39,8 @@ const Library = () => {
     const [toIndex, setToIndex] = useState(3);
 
     // Misc
-    const [showSearch, setShowSearch] = useState(false); // TODO: build search component using Supabase Full Text Search
+    const [showSearch, setShowSearch] = useState(false);
+    const [isSearching, setIsSearching] = useState(false);
 
     useEffect(() => {
         const loadData = async () => {
@@ -73,7 +75,7 @@ const Library = () => {
                     { count: "exact" }
                 )
                 .eq("is_published", true)
-                .order("publication_index", { ascending: true })
+                .order("publication_index", { ascending: false })
                 .range(fromIndex, toIndex);
 
             if (data) {
@@ -95,7 +97,7 @@ const Library = () => {
         };
 
         if (user) loadWorkbooks();
-    }, [fromIndex, toIndex, user]);
+    }, [fromIndex, toIndex, user, isSearching]);
 
     return (
         <MainLayout
@@ -105,6 +107,15 @@ const Library = () => {
         >
             {user && completeData ? (
                 <section className={styles.container}>
+                    {showSearch && (
+                        <Search
+                            {...{
+                                setShowSearch,
+                                setWorkbooks,
+                                setIsSearching,
+                            }}
+                        />
+                    )}
                     <header className={styles.header}>
                         <h1 className={styles.title}>Library</h1>
                         <div className={styles.buttonContainer}>
@@ -120,101 +131,66 @@ const Library = () => {
                                 aria-label="Search Workbook"
                                 title="Search Workbook"
                                 className={styles.button}
-                                onClick={() => setShowSearch(true)}
+                                onClick={() => {
+                                    setShowSearch(true);
+                                    setIsSearching(true);
+                                }}
                             >
                                 <SearchButton />
                             </button>
                         </div>
                     </header>
-                    <div className={styles.grid}>
-                        {workbooks?.length && (
-                            <>
-                                {workbooks!.map((workbook) => (
-                                    <Link
-                                        href={`/workbook/${workbook.slug}`}
-                                        key={workbook.id}
-                                        className={styles.workbookCard}
-                                    >
-                                        <h1 className={styles.workbookTitle}>
-                                            {workbook.title}{" "}
-                                            {workbook.type === "Premium" &&
-                                                (boughtWbIDs?.includes(
-                                                    workbook.id
-                                                ) ||
-                                                    workbook.creator_id ===
-                                                        user.id) && (
-                                                    <span
-                                                        className={
-                                                            styles.purchasedTag
-                                                        }
-                                                    >
-                                                        Purchased
-                                                    </span>
-                                                )}
-                                            {workbook.type === "Premium" &&
-                                                !boughtWbIDs?.includes(
-                                                    workbook.id
-                                                ) &&
-                                                workbook.creator_id !==
-                                                    user.id && (
-                                                    <span
-                                                        className={
-                                                            styles.premiumTag
-                                                        }
-                                                    >
-                                                        Premium
-                                                    </span>
-                                                )}
-                                        </h1>
-                                        <p
-                                            className={
-                                                styles.workbookDescription
-                                            }
-                                        >
-                                            {workbook.description}
-                                        </p>
-
-                                        <p className={styles.workbookField}>
-                                            {workbook.field}
-                                        </p>
-
-                                        <p className={styles.workbookCreator}>
-                                            {workbook.creator_name}
-                                        </p>
-                                        <p className={styles.date}>
-                                            {simplifyDate(
-                                                convertTZ(
-                                                    workbook.publication_date
-                                                )
-                                            )}
-                                        </p>
-                                    </Link>
-                                ))}
-                            </>
+                    <div className={styles.info}>
+                        <p className={styles.subtitle}>
+                            {isSearching ? "Search Results" : "All Workbooks"}
+                        </p>
+                        {isSearching && (
+                            <button
+                                onClick={() => setIsSearching(false)}
+                                className={styles.textButton}
+                            >
+                                Reset
+                            </button>
                         )}
                     </div>
-                    <div className={styles.navButtons}>
-                        <button
-                            disabled={fromIndex === 0}
-                            onClick={() => {
-                                setFromIndex(fromIndex - 4);
-                                setToIndex(toIndex - 4);
-                            }}
-                            className={styles.navButton}
-                        >
-                            &lt; Prev
-                        </button>
-                        <button
-                            disabled={fromIndex + 4 >= total}
-                            onClick={() => {
-                                setFromIndex(fromIndex + 4);
-                                setToIndex(toIndex + 4);
-                            }}
-                            className={styles.navButton}
-                        >
-                            Next &gt;
-                        </button>
-                    </div>
+                    {workbooks?.length ? (
+                        <div className={styles.grid}>
+                            {workbooks!.map((workbook) => (
+                                <Card
+                                    key={workbook.id}
+                                    {...{ workbook, boughtWbIDs, user }}
+                                />
+                            ))}
+                        </div>
+                    ) : (
+                        <p className={styles.text} style={{ height: "60vh" }}>
+                            No Workbooks found.
+                        </p>
+                    )}
+                    {!isSearching && (
+                        <div className={styles.navButtons}>
+                            <button
+                                disabled={fromIndex === 0}
+                                onClick={() => {
+                                    setFromIndex(fromIndex - 4);
+                                    setToIndex(toIndex - 4);
+                                }}
+                                className={styles.navButton}
+                            >
+                                &lt; Prev
+                            </button>
+                            <button
+                                disabled={fromIndex + 4 >= total}
+                                onClick={() => {
+                                    setFromIndex(fromIndex + 4);
+                                    setToIndex(toIndex + 4);
+                                }}
+                                className={styles.navButton}
+                            >
+                                Next &gt;
+                            </button>
+                        </div>
+                    )}
                 </section>
             ) : (
                 <section className={styles.container}>
