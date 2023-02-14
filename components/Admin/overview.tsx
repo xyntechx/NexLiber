@@ -20,6 +20,7 @@ interface Workbook {
     storyblok_num_id: number;
     added_project: boolean;
     buyer_count: number;
+    publication_index: number;
 }
 
 interface Props {
@@ -205,11 +206,23 @@ const WorkbookOverview = ({
             return;
         }
 
+        const { count, error: countError } = await supabase
+            .from("workbooks")
+            .select("is_published", { count: "exact", head: true })
+            .eq("is_published", true);
+
+        if (countError) {
+            setErrorMessage("An error has occurred. Please try again.");
+            setPublishLoading(false);
+            return;
+        }
+
         const updates = {
             id: workbookID,
             status: "Published",
             is_published: true,
             publication_date: currentUTCDateTime(),
+            publication_index: count ? count + 1 : 1,
         };
 
         const { error: workbookError } = await supabase

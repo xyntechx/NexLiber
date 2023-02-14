@@ -20,6 +20,7 @@ interface Workbook {
     storyblok_num_id: number;
     added_project: boolean;
     buyer_count: number;
+    publication_index: number;
 }
 
 interface Props {
