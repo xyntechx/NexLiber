@@ -103,8 +103,8 @@ const Workbook = () => {
                 setIsBought(true);
         };
 
-        if (workbookData) checkIsBought();
-    }, [workbookData, boughtWbIDs, isAdmin]);
+        if (workbookData && user) checkIsBought();
+    }, [workbookData, boughtWbIDs, isAdmin, user]);
 
     const handlePurchase = async () => {
         const { data: creatorData } = await supabase
