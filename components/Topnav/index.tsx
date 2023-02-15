@@ -11,10 +11,6 @@ const Toggle = dynamic(() => import("../Theme/Toggle"), {
     ssr: false,
 });
 
-const Logo = dynamic(() => import("../Theme/Logo"), {
-    ssr: false,
-});
-
 const Profile = dynamic(() => import("../Theme/Profile"), {
     ssr: false,
 });
@@ -97,7 +93,16 @@ const Topnav = () => {
             />
             <nav className={styles.topnav}>
                 <div className={styles.logoContainer}>
-                    <Logo />
+                    <Link href="/">
+                        <Image
+                            src="/assets/nexliber.svg"
+                            alt="NexLiber Logo"
+                            aria-hidden="true"
+                            width={50}
+                            height={50}
+                            className={styles.img}
+                        />
+                    </Link>
                 </div>
                 <div className={styles.links}>
                     <Link href="/library" className={styles.link}>

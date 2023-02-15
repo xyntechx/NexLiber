@@ -102,6 +102,14 @@
     transform: scale(1.1);
 }
 
+.img {
+    transition: 0.15s;
+}
+
+.img:hover {
+    transform: scale(1.1);
+}
+
 @media (max-width: 700px) {
     .logoContainer {
         width: fit-content;
