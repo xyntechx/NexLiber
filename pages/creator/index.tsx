@@ -31,7 +31,7 @@ const Creator = () => {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [stripeID, setStripeID] = useState("");
-    const [isCompleteStripe, setIsCompleteStripe] = useState(false);
+    const [isCompleteStripe, setIsCompleteStripe] = useState(0);
 
     // Workbook data
     const [freeDraftWbs, setFreeDraftWbs] = useState<any[] | null>();
@@ -130,7 +130,7 @@ const Creator = () => {
         const checkStripeAcc = () => {
             const postData = async () => {
                 const data = {
-                    stripe_id: stripeID,
+                    stripe_id: stripeID ? stripeID : null,
                 };
 
                 const response = await fetch("/api/stripe-acc/check", {
@@ -143,11 +143,12 @@ const Creator = () => {
 
             postData().then((data) => {
                 if (data.charges_enabled && data.details_submitted)
-                    setIsCompleteStripe(true);
+                    setIsCompleteStripe(1);
+                else setIsCompleteStripe(2);
             });
         };
 
-        if (stripeID) checkStripeAcc();
+        if (stripeID || stripeID === null) checkStripeAcc();
     }, [stripeID]);
 
     const handleStripeLink = () => {
@@ -210,7 +211,7 @@ const Creator = () => {
                     <div className={styles.topDiv}>
                         <h1 className={styles.title}>Creator Dashboard</h1>
                         <div className={styles.buttons}>
-                            {isCompleteStripe ? (
+                            {isCompleteStripe === 1 && (
                                 <>
                                     <div className={styles.buttonGreen}>
                                         Stripe Account Linked
@@ -225,7 +226,8 @@ const Creator = () => {
                                         <CreateButton /> Create Workbook
                                     </button>
                                 </>
-                            ) : (
+                            )}
+                            {isCompleteStripe === 2 && (
                                 <button
                                     onClick={() => handleStripeLink()}
                                     className={styles.button}
