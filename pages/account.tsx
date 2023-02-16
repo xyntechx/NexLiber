@@ -18,6 +18,7 @@ const Account = () => {
     const [updateLoading, setUpdateLoading] = useState(false);
     const [deleteLoading, setDeleteLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
+    const [showPopup, setShowPopup] = useState(false);
 
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
@@ -106,13 +107,11 @@ const Account = () => {
                     "An error has occurred. Please ensure all fields are filled in appropriately."
                 );
         } else {
-            setSuccessMessage(
-                "Profile updated! Teleporting you to the Library..."
-            );
+            setSuccessMessage("Profile updated!");
         }
 
         setUpdateLoading(false);
-        if (!error) setTimeout(() => (window.location.href = "/library"), 1000);
+        if (!error) setShowPopup(true);
 
         return;
     };
@@ -269,6 +268,44 @@ const Account = () => {
                     setErrorMessage,
                 }}
             />
+
+            {showPopup && (
+                <div className={styles.popupContainer}>
+                    <div className={styles.popup}>
+                        <div className={styles.popupTop}>
+                            <p
+                                className={styles.text}
+                                style={{
+                                    margin: "0",
+                                    fontWeight: "800",
+                                }}
+                            >
+                                Where to go?
+                            </p>
+                            <button
+                                onClick={() => setShowPopup(false)}
+                                className={styles.button}
+                                style={{
+                                    padding: "0",
+                                    border: "none",
+                                    minWidth: "0",
+                                    margin: "0",
+                                }}
+                            >
+                                X
+                            </button>
+                        </div>
+                        <div className={styles.popupMain}>
+                            <Link href="/library" className={styles.button}>
+                                Library
+                            </Link>
+                            <Link href="/creator" className={styles.button}>
+                                Creator Dashboard
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {user ? (
                 <section className={styles.container}>
