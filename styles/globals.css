@@ -25,7 +25,7 @@ body {
     background-color: var(--color-bg);
     color: var(--color-text);
     overflow-x: hidden;
-    scroll-behavior: smooth;
+    scroll-behavior: smooth !important;
     transition: background-color 0.25s ease-in-out;
 }
 
