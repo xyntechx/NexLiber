@@ -27,13 +27,30 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             process.env.SUPABASE_SERVICE_ROLE_KEY!
         );
 
-        let newBoughtWbIDs: string[] = data.bought_wb_ids;
-        if (data.bought_wb_ids) newBoughtWbIDs.push(data.id);
+        const { data: userData } = await supabase
+            .from("users")
+            .select("bought_wb_ids")
+            .eq("id", data.user_id);
+
+        let newBoughtWbIDs: string[] = userData![0].bought_wb_ids;
+        if (userData![0].bought_wb_ids) newBoughtWbIDs.push(data.id);
         else newBoughtWbIDs = [data.id];
 
-        const { error } = await supabase
+        const { error: userError } = await supabase
             .from("users")
             .upsert({ id: data.user_id, bought_wb_ids: newBoughtWbIDs });
+
+        const { data: workbookData } = await supabase
+            .from("workbooks")
+            .select("buyer_count")
+            .eq("id", data.id);
+
+        const { error: workbookError } = await supabase
+            .from("workbooks")
+            .upsert({
+                id: data.id,
+                buyer_count: workbookData![0].buyer_count + 1,
+            });
     }
 
     res.status(200).end();

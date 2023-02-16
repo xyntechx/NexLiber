@@ -146,7 +146,6 @@ const Workbook = () => {
                 slug: workbookSlug,
                 user_id: user!.id,
                 creator_stripe_acc_id: creatorData![0].stripe_acc_id,
-                bought_wb_ids: boughtWbIDs,
             };
 
             const response = await fetch("/api/stripe-payment/learner", {
