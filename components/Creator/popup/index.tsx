@@ -269,7 +269,10 @@ const CreateWorkbookPopup = ({ setShowCreatePopup }: Props) => {
                     <sub className={styles.sub}>
                         Type cannot be edited once Workbook is created. Please
                         read the{" "}
-                        <Link href="/docs#workbook" className={styles.link}>
+                        <Link
+                            href="/docs#workbook-details"
+                            className={styles.link}
+                        >
                             docs
                         </Link>{" "}
                         before choosing your Workbook&apos;s type.
