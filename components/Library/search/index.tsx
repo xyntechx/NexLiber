@@ -44,7 +44,9 @@ const Search = ({ setShowSearch, setWorkbooks, setIsSearching }: Props) => {
                     .eq("id", data[i].creator_id);
                 tempWorkbooks.push({
                     ...data[i],
-                    creator_name: userData![0].full_name,
+                    creator_name: userData
+                        ? userData![0].full_name
+                        : "Anonymous Creator",
                 });
             }
             setWorkbooks(tempWorkbooks);

@@ -42,7 +42,11 @@ const Card = ({ workbook, boughtWbIDs, user }: Props) => {
             </h1>
             <p className={styles.workbookDescription}>{workbook.description}</p>
             <p className={styles.workbookField}>{workbook.field}</p>
-            <p className={styles.workbookCreator}>{workbook.creator_name}</p>
+            <p className={styles.workbookCreator}>
+                {workbook.creator_name
+                    ? workbook.creator_name
+                    : "Anonymous Creator"}
+            </p>
             <p className={styles.date}>
                 {simplifyDate(convertTZ(workbook.publication_date))}
             </p>
