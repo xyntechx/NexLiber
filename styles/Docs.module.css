@@ -61,6 +61,37 @@
     line-height: 1.5;
 }
 
+.container pre {
+    /* big code blocks */
+    font-size: 1rem;
+    margin: 0;
+    width: 100%;
+}
+
+.container code {
+    /* inline code blocks */
+    font-size: 1rem;
+    margin: 0;
+    background-color: var(--color-text);
+    color: var(--color-theme);
+    padding: 0.2rem;
+    border-radius: 0.3rem;
+    font-weight: 400;
+    width: fit-content;
+    text-align: center;
+}
+
+.container blockquote {
+    /* blockquotes */
+    margin: 0;
+    padding: 1rem;
+    border: none;
+    border-left: 5px solid var(--color-theme);
+    background-color: var(--color-theme-blur);
+    width: 100%;
+    text-align: left;
+}
+
 .container ol,
 .container ul {
     /* list */
@@ -72,6 +103,14 @@
     padding-left: 2rem;
     width: 100%;
     text-align: left;
+}
+
+.container hr {
+    /* horizontal rule */
+    margin: 0;
+    width: 100%;
+    border: none;
+    border-top: 1px solid var(--color-theme-blur);
 }
 
 .link {
@@ -90,6 +129,49 @@
     height: auto;
     margin: 1rem auto;
     border: 1px solid var(--color-text-blur);
+}
+
+.container table {
+    /* overall table */
+    border: 1px solid var(--color-text);
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.container th {
+    /* table heading */
+    border: 1px solid var(--color-text);
+    color: var(--color-theme);
+    padding: 0.5rem;
+    text-align: center;
+}
+
+.container td {
+    /* table item */
+    border: 1px solid var(--color-text);
+    padding: 0.5rem;
+    text-align: left;
+}
+
+.container section {
+    /* footnotes container */
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: column;
+    row-gap: 0.5rem;
+}
+
+.container section h2 {
+    /* footnotes title */
+    font-size: 1.5rem;
+    color: var(--color-theme);
+    margin: 0;
+    font-weight: 800;
+    width: 100%;
+    text-align: left;
 }
 
 @media (max-width: 700px) {
