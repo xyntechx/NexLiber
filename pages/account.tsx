@@ -420,13 +420,12 @@ const Account = () => {
                         <p className={styles.text}>
                             Please read the{" "}
                             <Link
-                                href="/docs#delete-account"
+                                href="/terms-and-conditions"
                                 className={styles.link}
                             >
-                                Delete Account
+                                Terms and Conditions
                             </Link>{" "}
-                            section of the docs before you click the button
-                            below.
+                            before you click the button below.
                         </p>
                         <button
                             onClick={() => handleDeleteAccount()}
