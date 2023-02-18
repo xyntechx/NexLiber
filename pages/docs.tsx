@@ -476,6 +476,11 @@ const Docs = () => {
                         from the time your account is successfully deleted will
                         be received by NexLiber.
                     </li>
+                    <li>
+                        Should you delete your NexLiber account, your
+                        Workbook(s) will display <b>Anonymous Creator</b>{" "}
+                        instead of your full name.
+                    </li>
                 </ul>
             </section>
         </MainLayout>
