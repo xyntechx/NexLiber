@@ -8,18 +8,22 @@ const Footer = () => {
                 <Link href="/library" className={styles.link}>
                     Library
                 </Link>
-                <Link href="/community" target="_blank" className={styles.link}>
-                    Discord
-                </Link>
                 <Link href="/docs" className={styles.link}>
                     Docs
                 </Link>
-                <Link href="/terms-and-conditions" className={styles.link}>
-                    Terms and Conditions
+                <Link href="/community" target="_blank" className={styles.link}>
+                    Discord
+                </Link>
+                <Link
+                    href="https://xyntechx.com"
+                    target="_blank"
+                    className={styles.link}
+                >
+                    About Founder
                 </Link>
             </div>
             <sub className={styles.sub}>
-                Copyright &copy; 2022-2023 Nyx Audrey Angelo Iskandar
+                Copyright &copy; 2023 Nyx Audrey Angelo Iskandar
             </sub>
         </footer>
     );
