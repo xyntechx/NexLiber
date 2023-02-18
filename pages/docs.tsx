@@ -4,6 +4,10 @@ import Image from "next/image";
 import styles from "../styles/Docs.module.css";
 
 const Docs = () => {
+    const setURL = (elem: EventTarget) => {
+        window.location.href = `#${(elem as HTMLHeadingElement).id}`;
+    };
+
     return (
         <MainLayout
             title="NexLiber | Docs"
@@ -11,7 +15,25 @@ const Docs = () => {
             url="/docs"
         >
             <section className={styles.container}>
-                <h1 id="getting-started">Getting Started</h1>
+                <blockquote>
+                    Click the{" "}
+                    <span
+                        style={{
+                            color: "var(--color-theme)",
+                            fontWeight: "800",
+                        }}
+                    >
+                        orange
+                    </span>{" "}
+                    headings to anchor them.
+                </blockquote>
+                <h1
+                    id="getting-started"
+                    onClick={(e) => setURL(e.target)}
+                    style={{ cursor: "pointer" }}
+                >
+                    Getting Started
+                </h1>
                 <p>Hi there! Welcome to NexLiber!</p>
                 <p>
                     We want you to know that you&apos;re playing an important
@@ -21,7 +43,13 @@ const Docs = () => {
                     NexLiber user.
                 </p>
 
-                <h2 id="our-lingo">Our Lingo</h2>
+                <h2
+                    id="our-lingo"
+                    onClick={(e) => setURL(e.target)}
+                    style={{ cursor: "pointer" }}
+                >
+                    Our Lingo
+                </h2>
                 <p>
                     <b>Workbook</b>: A comprehensive community-created project
                     documentation explaining the &quot;why&quot; behind code.
@@ -59,7 +87,13 @@ const Docs = () => {
                     Library are clear, thorough, and accurate.
                 </p>
 
-                <h2 id="joining-us">Joining Us</h2>
+                <h2
+                    id="joining-us"
+                    onClick={(e) => setURL(e.target)}
+                    style={{ cursor: "pointer" }}
+                >
+                    Joining Us
+                </h2>
                 <p>
                     Becoming a Creator and Learner is easy: just create an
                     account and go from there (these docs will help you out)! To
@@ -82,7 +116,13 @@ const Docs = () => {
                     coders!
                 </p>
 
-                <h1 id="the-flow">The Flow</h1>
+                <h1
+                    id="the-flow"
+                    onClick={(e) => setURL(e.target)}
+                    style={{ cursor: "pointer" }}
+                >
+                    The Flow
+                </h1>
                 <p>NexLiber has a pretty simple flow:</p>
                 <Image
                     src="/assets/nexliber-flow.svg"
@@ -119,7 +159,13 @@ const Docs = () => {
                     </Link>
                     .
                 </p>
-                <h2 id="drafting-a-workbook">Drafting a Workbook</h2>
+                <h2
+                    id="drafting-a-workbook"
+                    onClick={(e) => setURL(e.target)}
+                    style={{ cursor: "pointer" }}
+                >
+                    Drafting a Workbook
+                </h2>
                 <p>
                     To create a Workbook, you must first{" "}
                     <Link href="/auth" className={styles.link}>
@@ -132,7 +178,11 @@ const Docs = () => {
                     </Link>
                     .
                 </p>
-                <h3 id="linking-your-stripe-account">
+                <h3
+                    id="linking-your-stripe-account"
+                    onClick={(e) => setURL(e.target)}
+                    style={{ cursor: "pointer" }}
+                >
                     Linking Your Stripe Account
                 </h3>
                 <p>
@@ -149,7 +199,13 @@ const Docs = () => {
                     linked your Stripe account, a <b>Create Workbook</b> button
                     will appear.
                 </p>
-                <h3 id="workbook-details">Workbook Details</h3>
+                <h3
+                    id="workbook-details"
+                    onClick={(e) => setURL(e.target)}
+                    style={{ cursor: "pointer" }}
+                >
+                    Workbook Details
+                </h3>
                 <p>
                     Clicking <b>Create Workbook</b> fires up a popup for you to
                     enter your Workbook details: title, description, field,
@@ -183,7 +239,13 @@ const Docs = () => {
                     delete the Premium Workbook. The Workbook type cannot be
                     changed once your Workbook is successfully created.
                 </p>
-                <h3 id="workbook-content">Workbook Content</h3>
+                <h3
+                    id="workbook-content"
+                    onClick={(e) => setURL(e.target)}
+                    style={{ cursor: "pointer" }}
+                >
+                    Workbook Content
+                </h3>
                 <p>
                     Upon clicking <b>Create</b> (and completing the Stripe
                     payment process should you create a Premium Workbook), you
@@ -208,7 +270,13 @@ const Docs = () => {
                     The <b>Submit</b> button needs more work to be activated, so
                     read on!
                 </p>
-                <h3 id="project-submission">Project Submission</h3>
+                <h3
+                    id="project-submission"
+                    onClick={(e) => setURL(e.target)}
+                    style={{ cursor: "pointer" }}
+                >
+                    Project Submission
+                </h3>
                 <p>
                     Before you can submit your Workbook draft, you must first
                     add your project to the{" "}
@@ -229,7 +297,11 @@ const Docs = () => {
                     The <b>Submit</b> button in the Editor will now be
                     activated.
                 </p>
-                <h2 id="getting-your-workbook-reviewed">
+                <h2
+                    id="getting-your-workbook-reviewed"
+                    onClick={(e) => setURL(e.target)}
+                    style={{ cursor: "pointer" }}
+                >
                     Getting your Workbook Reviewed
                 </h2>
                 <p>
@@ -249,14 +321,26 @@ const Docs = () => {
                     again. This submission-feedback cycle continues until your
                     Workbook is ready to be published.
                 </p>
-                <h2 id="publishing-a-workbook">Publishing a Workbook</h2>
+                <h2
+                    id="publishing-a-workbook"
+                    onClick={(e) => setURL(e.target)}
+                    style={{ cursor: "pointer" }}
+                >
+                    Publishing a Workbook
+                </h2>
                 <p>
                     Once your Workbook is ready to be published, the Admin will
                     publish it for you. This happens when all feedback is deemed
                     resolved by the Admin. You will receive an email
                     notification should your Workbook be successfully published.
                 </p>
-                <h2 id="reading-a-workbook">Reading a Workbook</h2>
+                <h2
+                    id="reading-a-workbook"
+                    onClick={(e) => setURL(e.target)}
+                    style={{ cursor: "pointer" }}
+                >
+                    Reading a Workbook
+                </h2>
                 <p>
                     You can read every published Workbook in the{" "}
                     <Link href="/library" className={styles.link}>
@@ -274,7 +358,13 @@ const Docs = () => {
                     much copy-pasting. Always keep that in mind. Escape tutorial
                     hell!
                 </p>
-                <h2 id="viewing-a-project">Viewing a Project</h2>
+                <h2
+                    id="viewing-a-project"
+                    onClick={(e) => setURL(e.target)}
+                    style={{ cursor: "pointer" }}
+                >
+                    Viewing a Project
+                </h2>
                 <p>
                     Go to{" "}
                     <Link
@@ -290,11 +380,23 @@ const Docs = () => {
                     materialised.
                 </p>
 
-                <h1 id="about-workbooks">About Workbooks</h1>
+                <h1
+                    id="about-workbooks"
+                    onClick={(e) => setURL(e.target)}
+                    style={{ cursor: "pointer" }}
+                >
+                    About Workbooks
+                </h1>
                 <p>
                     Here are some good-to-know information regarding Workbooks.
                 </p>
-                <h2 id="workbook-status">Workbook Status</h2>
+                <h2
+                    id="workbook-status"
+                    onClick={(e) => setURL(e.target)}
+                    style={{ cursor: "pointer" }}
+                >
+                    Workbook Status
+                </h2>
                 <p>
                     <b style={{ color: "#0ea5e9" }}>In Progress</b>: Workbook
                     draft has been created/edited but not submitted.
@@ -317,7 +419,13 @@ const Docs = () => {
                     </Link>
                     .
                 </p>
-                <h2 id="markdown-cheatsheet">Markdown Cheatsheet</h2>
+                <h2
+                    id="markdown-cheatsheet"
+                    onClick={(e) => setURL(e.target)}
+                    style={{ cursor: "pointer" }}
+                >
+                    Markdown Cheatsheet
+                </h2>
                 <p>
                     Find it{" "}
                     <Link
@@ -330,7 +438,13 @@ const Docs = () => {
                     .
                 </p>
 
-                <h1 id="submitting-feedback">Submitting Feedback</h1>
+                <h1
+                    id="submitting-feedback"
+                    onClick={(e) => setURL(e.target)}
+                    style={{ cursor: "pointer" }}
+                >
+                    Submitting Feedback
+                </h1>
                 <p>
                     Should you find bugs, have improvement suggestions, or want
                     to give us any other feedback, please don&apos;t hesitate to{" "}
@@ -342,6 +456,27 @@ const Docs = () => {
                     </Link>{" "}
                     us.
                 </p>
+
+                <h1
+                    id="important-notes"
+                    onClick={(e) => setURL(e.target)}
+                    style={{ cursor: "pointer" }}
+                >
+                    Important Notes
+                </h1>
+                <ul>
+                    <li>
+                        All information and data collected by NexLiber (e.g.
+                        your name, email, etc.) will only be used on and for
+                        nexliber.com.
+                    </li>
+                    <li>
+                        Should you delete your NexLiber account, any payments
+                        made by Learners for your Premium Workbook(s) starting
+                        from the time your account is successfully deleted will
+                        be received by NexLiber.
+                    </li>
+                </ul>
             </section>
         </MainLayout>
     );
