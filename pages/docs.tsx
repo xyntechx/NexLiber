@@ -454,7 +454,15 @@ const Docs = () => {
                     >
                         email
                     </Link>{" "}
-                    us.
+                    us or message us via{" "}
+                    <Link
+                        href="/community"
+                        target="_blank"
+                        className={styles.link}
+                    >
+                        Discord
+                    </Link>
+                    .
                 </p>
 
                 <h1
