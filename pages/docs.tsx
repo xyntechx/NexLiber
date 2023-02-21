@@ -287,8 +287,15 @@ const Docs = () => {
                     >
                         NexLiber-Projects
                     </Link>{" "}
-                    GitHub repo. Follow the instructions in its README for more
-                    information.
+                    GitHub repo. Follow the instructions in the{" "}
+                    <Link
+                        href="https://github.com/teamxynlab/NexLiber-Projects/blob/main/CREATOR.md"
+                        target="_blank"
+                        className={styles.link}
+                    >
+                        Creator Guide
+                    </Link>{" "}
+                    for more information.
                 </p>
                 <p>
                     Once that&apos;s done, click <b>Done</b> under the
