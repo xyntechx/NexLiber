@@ -20,6 +20,7 @@ const View = () => {
     const [fullname, setFullname] = useState("");
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
+    const [isAdmin, setIsAdmin] = useState(false);
 
     storyblokInit({
         accessToken: process.env.NEXT_PUBLIC_STORYBLOK_PUBLIC_TOKEN,
@@ -55,13 +56,14 @@ const View = () => {
         const loadUserData = async () => {
             const { data } = await supabase
                 .from("users")
-                .select("full_name, username, email")
+                .select("full_name, username, email, is_admin")
                 .eq("id", user!.id);
 
             if (data) {
                 setFullname(data[0].full_name);
                 setUsername(data[0].username);
                 setEmail(data[0].email);
+                setIsAdmin(data[0].is_admin);
             }
         };
 
@@ -80,7 +82,7 @@ const View = () => {
             description="Read unpublished Workbooks"
             url="/admin/view"
         >
-            {user && completeUserData ? (
+            {user && completeUserData && isAdmin ? (
                 <section className={styles.container}>
                     <h1 className={styles.editorWorkbookTitle} title={title}>
                         <Link
@@ -106,14 +108,25 @@ const View = () => {
                             Dashboard.
                         </h1>
                     ) : (
-                        <h1 className={styles.text}>
-                            Please{" "}
-                            <Link href="/account" className={styles.link}>
-                                complete all fields
-                            </Link>{" "}
-                            in the My Account page to access the Admin
-                            Dashboard.
-                        </h1>
+                        <>
+                            {!completeUserData ? (
+                                <h1 className={styles.text}>
+                                    Please{" "}
+                                    <Link
+                                        href="/account"
+                                        className={styles.link}
+                                    >
+                                        complete all fields
+                                    </Link>{" "}
+                                    in the My Account page to access the Admin
+                                    Dashboard.
+                                </h1>
+                            ) : (
+                                <h1 className={styles.text}>
+                                    The Admin Dashboard is only for Admins.
+                                </h1>
+                            )}
+                        </>
                     )}
                 </section>
             )}

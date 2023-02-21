@@ -20,6 +20,7 @@ const Admin = () => {
     const [fullname, setFullname] = useState("");
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
+    const [isAdmin, setIsAdmin] = useState(false);
 
     // Workbook Data
     const [underReviewWbs, setUnderReviewWbs] = useState<any[] | null>();
@@ -59,7 +60,7 @@ const Admin = () => {
         const loadUserData = async () => {
             const { data } = await supabase
                 .from("users")
-                .select("full_name, username, email")
+                .select("full_name, username, email, is_admin")
                 .eq("id", user!.id);
             setUserData(data);
         };
@@ -72,6 +73,7 @@ const Admin = () => {
             setFullname(userData[0].full_name);
             setUsername(userData[0].username);
             setEmail(userData[0].email);
+            setIsAdmin(userData[0].is_admin);
         }
     }, [userData]);
 
@@ -96,7 +98,7 @@ const Admin = () => {
                 }}
             />
 
-            {user && completeUserData ? (
+            {user && completeUserData && isAdmin ? (
                 <section className={styles.container}>
                     <h1 className={styles.title}>Admin Dashboard</h1>
                     <div className={styles.mainDiv}>
@@ -233,14 +235,25 @@ const Admin = () => {
                             Dashboard.
                         </h1>
                     ) : (
-                        <h1 className={styles.text}>
-                            Please{" "}
-                            <Link href="/account" className={styles.link}>
-                                complete all fields
-                            </Link>{" "}
-                            in the My Account page to access the Admin
-                            Dashboard.
-                        </h1>
+                        <>
+                            {!completeUserData ? (
+                                <h1 className={styles.text}>
+                                    Please{" "}
+                                    <Link
+                                        href="/account"
+                                        className={styles.link}
+                                    >
+                                        complete all fields
+                                    </Link>{" "}
+                                    in the My Account page to access the Admin
+                                    Dashboard.
+                                </h1>
+                            ) : (
+                                <h1 className={styles.text}>
+                                    The Admin Dashboard is only for Admins.
+                                </h1>
+                            )}
+                        </>
                     )}
                 </section>
             )}
