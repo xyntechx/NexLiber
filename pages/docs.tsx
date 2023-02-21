@@ -279,7 +279,7 @@ const Docs = () => {
                 </h3>
                 <p>
                     Before you can submit your Workbook draft, you must first
-                    add your project to the{" "}
+                    add your Project to the{" "}
                     <Link
                         href="https://github.com/teamxynlab/NexLiber-Projects"
                         className={styles.link}
@@ -292,10 +292,9 @@ const Docs = () => {
                 </p>
                 <p>
                     Once that&apos;s done, click <b>Done</b> under the
-                    &quot;Please add your project source code to
-                    NexLiber-Projects&quot; prompt in your Creator Dashboard.
-                    The <b>Submit</b> button in the Editor will now be
-                    activated.
+                    &quot;Please add your Project to NexLiber-Projects&quot;
+                    prompt in your Creator Dashboard. The <b>Submit</b> button
+                    in the Editor will now be activated.
                 </p>
                 <h2
                     id="getting-your-workbook-reviewed"

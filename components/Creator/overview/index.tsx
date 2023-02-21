@@ -228,8 +228,7 @@ const WorkbookOverview = ({
                                                 className={styles.text}
                                                 style={{ textAlign: "center" }}
                                             >
-                                                Please add your project source
-                                                code to{" "}
+                                                Please add your Project to{" "}
                                                 <Link
                                                     href="https://github.com/teamxynlab/NexLiber-Projects"
                                                     target="_blank"
@@ -245,8 +244,8 @@ const WorkbookOverview = ({
                                                     confirmSourceCodeAddition()
                                                 }
                                                 className={styles.button}
-                                                aria-label="I have added my project source code to NexLiber-Projects"
-                                                title="I have added my project source code to NexLiber-Projects"
+                                                aria-label="I have added my Project to NexLiber-Projects"
+                                                title="I have added my Project to NexLiber-Projects"
                                             >
                                                 Done
                                             </button>

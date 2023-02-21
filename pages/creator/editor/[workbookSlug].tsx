@@ -229,7 +229,7 @@ const Editor = () => {
 
         if (!addedProject) {
             setErrorMessage(
-                "Please add your project source code to NexLiber-Projects before publishing your Workbook."
+                "Please add your Project to NexLiber-Projects before publishing your Workbook."
             );
             setSubmitLoading(false);
             return;
@@ -409,7 +409,7 @@ const Editor = () => {
                                 aria-label="Submit Workbook Draft"
                                 title={
                                     !needSubmit
-                                        ? "Complete your Workbook draft and add your project source code before submitting"
+                                        ? "Complete your Workbook draft and add your Project before submitting"
                                         : "Submit Workbook Draft"
                                 }
                                 disabled={!needSubmit}
