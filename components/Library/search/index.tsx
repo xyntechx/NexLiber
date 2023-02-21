@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { supabase } from "../../../utils/supabase";
+import { create, insertBatch, search } from "@lyrasearch/lyra";
 import styles from "./Search.module.css";
 
 interface WorkbookProps {
@@ -22,7 +23,9 @@ interface Props {
 
 const Search = ({ setShowSearch, setWorkbooks, setIsSearching }: Props) => {
     const searchInput = useRef<HTMLInputElement>(null);
-    const [targetColumn, setTargetColumn] = useState("title");
+    const [targetColumn, setTargetColumn] = useState<
+        "title" | "field" | "creator_name"
+    >("title");
 
     const searchWorkbook = async () => {
         const { data } = await supabase
@@ -32,26 +35,55 @@ const Search = ({ setShowSearch, setWorkbooks, setIsSearching }: Props) => {
                 { count: "exact" }
             )
             .eq("is_published", true)
-            .textSearch(targetColumn, searchInput.current!.value)
             .order("publication_index", { ascending: false });
 
+        let workbooks = [];
+
         if (data) {
-            const tempWorkbooks = [];
             for (let i = 0; i < data.length; i++) {
                 const { data: userData } = await supabase
                     .from("users")
                     .select("full_name")
                     .eq("id", data[i].creator_id);
-                tempWorkbooks.push({
+
+                workbooks.push({
                     ...data[i],
                     creator_name: userData
                         ? userData![0].full_name
                         : "Anonymous Creator",
                 });
             }
-            setWorkbooks(tempWorkbooks);
         }
 
+        const db = await create({
+            schema: {
+                id: "string",
+                type: "string", // unsearchable
+                title: "string",
+                description: "string", // unsearchable
+                field: "string",
+                creator_id: "string", // unsearchable
+                creator_name: "string",
+                publication_date: "string", // unsearchable
+                slug: "string", // unsearchable
+            },
+        });
+
+        await insertBatch(db, workbooks, { batchSize: workbooks.length });
+
+        const searchResult = await search(db, {
+            term: searchInput.current!.value,
+            properties: [targetColumn],
+            tolerance: 1, // for typo tolerance
+        });
+
+        let result = [];
+
+        for (let i = 0; i < searchResult.hits.length; i++) {
+            result.push(searchResult.hits[i].document);
+        }
+
+        setWorkbooks(result);
         setShowSearch(false);
     };
 
@@ -99,18 +131,6 @@ const Search = ({ setShowSearch, setWorkbooks, setIsSearching }: Props) => {
                             Title
                         </button>
                         <button
-                            onClick={() => setTargetColumn("description")}
-                            className={styles.button}
-                            style={{
-                                color:
-                                    targetColumn === "description"
-                                        ? "var(--color-theme)"
-                                        : "var(--color-text)",
-                            }}
-                        >
-                            Desc
-                        </button>
-                        <button
                             onClick={() => setTargetColumn("field")}
                             className={styles.button}
                             style={{
@@ -121,6 +141,18 @@ const Search = ({ setShowSearch, setWorkbooks, setIsSearching }: Props) => {
                             }}
                         >
                             Field
+                        </button>
+                        <button
+                            onClick={() => setTargetColumn("creator_name")}
+                            className={styles.button}
+                            style={{
+                                color:
+                                    targetColumn === "creator_name"
+                                        ? "var(--color-theme)"
+                                        : "var(--color-text)",
+                            }}
+                        >
+                            Creator
                         </button>
                     </div>
                     <input
