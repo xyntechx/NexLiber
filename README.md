@@ -7,6 +7,7 @@ Create to Learn.
 - Stripe
 - Storyblok
 - SendGrid
+- Lyra
 
 ## 🔨 Usage
 ```bash
