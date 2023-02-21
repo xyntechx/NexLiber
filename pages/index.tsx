@@ -394,10 +394,7 @@ const Home = () => {
                             what are you waiting for?
                         </b>
                     </p>
-                    <div
-                        className={styles.nav}
-                        style={{ justifyContent: "center" }}
-                    >
+                    <div className={styles.navRow}>
                         <Link href="/auth" className={styles.button}>
                             Sign Up
                         </Link>
