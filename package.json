@@ -10,6 +10,7 @@
         "stripe:listen": "stripe listen --forward-to localhost:3000/api/stripe-webhook --latest"
     },
     "dependencies": {
+        "@lyrasearch/lyra": "^0.4.9",
         "@sendgrid/mail": "^7.7.0",
         "@storyblok/react": "^2.0.6",
         "@supabase/auth-helpers-react": "^0.3.1",
