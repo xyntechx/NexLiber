@@ -30,6 +30,7 @@ const Creator = () => {
     const [fullname, setFullname] = useState("");
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
+    const [countryCode, setCountryCode] = useState("");
     const [stripeID, setStripeID] = useState("");
     const [isCompleteStripe, setIsCompleteStripe] = useState(0);
 
@@ -103,7 +104,9 @@ const Creator = () => {
         const loadUserData = async () => {
             const { data } = await supabase
                 .from("users")
-                .select("full_name, username, email, stripe_acc_id")
+                .select(
+                    "full_name, username, email, stripe_acc_id, country_code"
+                )
                 .eq("id", user!.id);
             setUserData(data);
         };
@@ -116,15 +119,16 @@ const Creator = () => {
             setFullname(userData[0].full_name);
             setUsername(userData[0].username);
             setEmail(userData[0].email);
+            setCountryCode(userData[0].country_code);
             setStripeID(userData[0].stripe_acc_id);
         }
     }, [userData]);
 
     useEffect(() => {
-        if (fullname && username && email) {
+        if (fullname && username && email && countryCode) {
             setCompleteUserData(true);
         }
-    }, [fullname, username, email]);
+    }, [fullname, username, email, countryCode]);
 
     useEffect(() => {
         const checkStripeAcc = () => {
@@ -158,6 +162,7 @@ const Creator = () => {
             const data = {
                 email: email,
                 stripe_id: stripeID,
+                country_code: countryCode,
             };
 
             const response = await fetch("/api/stripe-acc/link", {
@@ -205,6 +210,7 @@ const Creator = () => {
                     {showCreatePopup && (
                         <CreateWorkbookPopup
                             setShowCreatePopup={setShowCreatePopup}
+                            countryCode={countryCode}
                         />
                     )}
 

@@ -28,6 +28,7 @@ const Library = () => {
     const [fullname, setFullname] = useState("");
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
+    const [countryCode, setCountryCode] = useState("");
     const [boughtWbIDs, setBoughtWbIDs] = useState<string[] | null>();
 
     // Workbooks
@@ -46,13 +47,16 @@ const Library = () => {
         const loadData = async () => {
             const { data } = await supabase
                 .from("users")
-                .select("full_name, username, email, bought_wb_ids")
+                .select(
+                    "full_name, username, email, bought_wb_ids, country_code"
+                )
                 .eq("id", user!.id);
 
             if (data) {
                 setFullname(data[0].full_name);
                 setUsername(data[0].username);
                 setEmail(data[0].email);
+                setCountryCode(data[0].country_code);
                 setBoughtWbIDs(data[0].bought_wb_ids);
             }
         };
@@ -61,10 +65,10 @@ const Library = () => {
     }, [user]);
 
     useEffect(() => {
-        if (fullname && username && email) {
+        if (fullname && username && email && countryCode) {
             setCompleteData(true);
         }
-    }, [fullname, username, email]);
+    }, [fullname, username, email, countryCode]);
 
     useEffect(() => {
         const loadWorkbooks = async () => {

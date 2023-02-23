@@ -20,6 +20,7 @@ const View = () => {
     const [fullname, setFullname] = useState("");
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
+    const [countryCode, setCountryCode] = useState("");
     const [isAdmin, setIsAdmin] = useState(false);
 
     storyblokInit({
@@ -56,13 +57,14 @@ const View = () => {
         const loadUserData = async () => {
             const { data } = await supabase
                 .from("users")
-                .select("full_name, username, email, is_admin")
+                .select("full_name, username, email, is_admin, country_code")
                 .eq("id", user!.id);
 
             if (data) {
                 setFullname(data[0].full_name);
                 setUsername(data[0].username);
                 setEmail(data[0].email);
+                setCountryCode(data[0].country_code);
                 setIsAdmin(data[0].is_admin);
             }
         };
@@ -71,10 +73,10 @@ const View = () => {
     }, [user]);
 
     useEffect(() => {
-        if (fullname && username && email) {
+        if (fullname && username && email && countryCode) {
             setCompleteUserData(true);
         }
-    }, [fullname, username, email]);
+    }, [fullname, username, email, countryCode]);
 
     return (
         <MainLayout

@@ -7,6 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import styles from "../styles/Account.module.css";
 import Alert from "../components/Alert";
+import { countries } from "../utils/countries";
 
 const Profile = dynamic(() => import("../components/Theme/Profile"), {
     ssr: false,
@@ -23,11 +24,10 @@ const Account = () => {
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
 
-    const [data, setData] = useState<any[] | null>();
-
     const [fullname, setFullname] = useState("");
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
+    const [countryCode, setCountryCode] = useState("");
     const [avatar_url, setAvatarUrl] = useState("");
     const [avatarSrc, setAvatarSrc] = useState("");
     const [stripeID, setStripeID] = useState("");
@@ -36,23 +36,23 @@ const Account = () => {
         const loadData = async () => {
             const { data } = await supabase
                 .from("users")
-                .select("full_name, username, email, avatar_url, stripe_acc_id")
+                .select(
+                    "full_name, username, email, avatar_url, stripe_acc_id, country_code"
+                )
                 .eq("id", user!.id);
-            setData(data);
+
+            if (data) {
+                setFullname(data[0].full_name);
+                setUsername(data[0].username);
+                setEmail(data[0].email);
+                setCountryCode(data[0].country_code);
+                setAvatarUrl(data[0].avatar_url);
+                setStripeID(data[0].stripe_acc_id);
+            }
         };
 
         if (user) loadData();
     }, [user]);
-
-    useEffect(() => {
-        if (data) {
-            setFullname(data[0].full_name);
-            setUsername(data[0].username);
-            setEmail(data[0].email);
-            setAvatarUrl(data[0].avatar_url);
-            setStripeID(data[0].stripe_acc_id);
-        }
-    }, [data]);
 
     useEffect(() => {
         if (avatar_url) downloadImage(avatar_url);
@@ -73,18 +73,33 @@ const Account = () => {
     const handleUpdateProfile = async () => {
         setUpdateLoading(true);
 
-        if (!fullname || !username || !email) {
+        if (!fullname || !username || !email || !countryCode) {
             setErrorMessage("Please ensure all fields are filled in.");
             setUpdateLoading(false);
             return;
         }
 
-        const updates = {
-            id: user!.id,
-            full_name: fullname,
-            username,
-            email,
-        };
+        let updates;
+
+        if (countryCode === "OTHERS") {
+            updates = {
+                id: user!.id,
+                full_name: fullname,
+                username,
+                email,
+                country_code: countryCode,
+                stripe_acc_id: "NIL",
+            };
+        } else {
+            updates = {
+                id: user!.id,
+                full_name: fullname,
+                username,
+                email,
+                country_code: countryCode,
+            };
+        }
+
         const { error } = await supabase.from("users").upsert(updates);
 
         if (error) {
@@ -391,6 +406,32 @@ const Account = () => {
                             id="email"
                             className={styles.input}
                         />
+                    </div>
+                    <div className={styles.inputContainer}>
+                        <label
+                            htmlFor="country"
+                            className={styles.text}
+                            style={{ paddingLeft: "0.5rem", cursor: "text" }}
+                        >
+                            Country
+                        </label>
+                        <select
+                            id="country"
+                            defaultValue={countryCode ? countryCode : ""}
+                            className={styles.input}
+                            onChange={(e) => setCountryCode(e.target.value)}
+                        >
+                            <option disabled />
+                            {countries.map((country) => (
+                                <option
+                                    key={country.code}
+                                    value={country.code}
+                                    selected={countryCode === country.code}
+                                >
+                                    {country.country}
+                                </option>
+                            ))}
+                        </select>
                     </div>
 
                     <button

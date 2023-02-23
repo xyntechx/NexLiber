@@ -20,6 +20,7 @@ const Admin = () => {
     const [fullname, setFullname] = useState("");
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
+    const [countryCode, setCountryCode] = useState("");
     const [isAdmin, setIsAdmin] = useState(false);
 
     // Workbook Data
@@ -60,7 +61,7 @@ const Admin = () => {
         const loadUserData = async () => {
             const { data } = await supabase
                 .from("users")
-                .select("full_name, username, email, is_admin")
+                .select("full_name, username, email, is_admin, country_code")
                 .eq("id", user!.id);
             setUserData(data);
         };
@@ -73,15 +74,16 @@ const Admin = () => {
             setFullname(userData[0].full_name);
             setUsername(userData[0].username);
             setEmail(userData[0].email);
+            setCountryCode(userData[0].country_code);
             setIsAdmin(userData[0].is_admin);
         }
     }, [userData]);
 
     useEffect(() => {
-        if (fullname && username && email) {
+        if (fullname && username && email && countryCode) {
             setCompleteUserData(true);
         }
-    }, [fullname, username, email]);
+    }, [fullname, username, email, countryCode]);
 
     return (
         <MainLayout

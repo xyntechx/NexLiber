@@ -9,9 +9,10 @@ import styles from "./Popup.module.css";
 
 interface Props {
     setShowCreatePopup: (showCreatePopup: boolean) => void;
+    countryCode: string;
 }
 
-const CreateWorkbookPopup = ({ setShowCreatePopup }: Props) => {
+const CreateWorkbookPopup = ({ setShowCreatePopup, countryCode }: Props) => {
     const user = useUser();
 
     const titleInput = useRef<HTMLInputElement>(null);
@@ -264,7 +265,7 @@ const CreateWorkbookPopup = ({ setShowCreatePopup }: Props) => {
                     >
                         <option disabled />
                         <option value="Free">Free</option>
-                        <option value="Premium">Premium</option>
+                        {countryCode !== "OTHERS" && <option value="Premium">Premium</option>}
                     </select>
                     <sub className={styles.sub}>
                         Type cannot be edited once Workbook is created. Please

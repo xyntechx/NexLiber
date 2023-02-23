@@ -24,6 +24,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
             payment_intent_data: {
                 metadata: body,
                 transfer_data: { destination: body.creator_stripe_acc_id },
+                on_behalf_of: body.creator_stripe_acc_id,
             },
         });
     } else {

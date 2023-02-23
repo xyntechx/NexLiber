@@ -14,6 +14,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     if (!body.stripe_id) {
         // if user does not have a stripe_acc_id stored in database
         account = await stripe.accounts.create({
+            country: body.country_code,
             email: body.email,
             type: "express",
             capabilities: {

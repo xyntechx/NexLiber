@@ -8,7 +8,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     const body = JSON.parse(req.body);
     const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
-    if (body.stripe_id) {
+    if (body.stripe_id && body.stripe_id !== "NIL") {
         // If user has a Stripe Account
         const deleted = await stripe.accounts.del(body.stripe_id);
         res.status(200).json({

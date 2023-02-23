@@ -16,6 +16,7 @@ const Home = () => {
     const [fullname, setFullname] = useState("");
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
+    const [countryCode, setCountryCode] = useState("");
 
     const [learnerField, setLearnerField] = useState<string | null>();
     const [creatorField, setCreatorField] = useState<string | null>();
@@ -25,7 +26,7 @@ const Home = () => {
         const loadData = async () => {
             const { data } = await supabase
                 .from("users")
-                .select("full_name, username, email")
+                .select("full_name, username, email, country_code")
                 .eq("id", user!.id);
             setData(data);
         };
@@ -38,21 +39,21 @@ const Home = () => {
             setFullname(data[0].full_name);
             setUsername(data[0].username);
             setEmail(data[0].email);
+            setCountryCode(data[0].country_code);
         }
     }, [data]);
 
     useEffect(() => {
-        if (fullname && username && email) {
+        if (fullname && username && email && countryCode) {
             setCompleteData(true);
         }
-    }, [fullname, username, email]);
+    }, [fullname, username, email, countryCode]);
 
     useEffect(() => {
         supabase.auth.onAuthStateChange(async (event, session) => {
             if (event == "SIGNED_IN") {
-                // TODO: Uncomment below
-                // if (completeData) window.location.href = "/library";
-                // else window.location.href = "/account";
+                if (completeData) window.location.href = "/library";
+                else window.location.href = "/account";
             }
         });
     }, [completeData]);
