@@ -308,7 +308,7 @@ const Docs = () => {
                     onClick={(e) => setURL(e.target)}
                     style={{ cursor: "pointer" }}
                 >
-                    Getting your Workbook Reviewed
+                    Getting Your Workbook Reviewed
                 </h2>
                 <p>
                     Clicking <b>Submit</b> submits your Workbook draft to an
@@ -478,24 +478,73 @@ const Docs = () => {
                 >
                     Important Notes
                 </h1>
+                <h2
+                    id="privacy"
+                    onClick={(e) => setURL(e.target)}
+                    style={{ cursor: "pointer" }}
+                >
+                    Privacy
+                </h2>
+                <p>
+                    All information and data collected by NexLiber (e.g. your
+                    name, email, etc.) will only be used on and for
+                    nexliber.com.
+                </p>
+                <h2
+                    id="stripe-unsupported-countries"
+                    onClick={(e) => setURL(e.target)}
+                    style={{ cursor: "pointer" }}
+                >
+                    Stripe Unsupported Countries
+                </h2>
+                <p>
+                    Due to{" "}
+                    <Link
+                        href="https://stripe.com/"
+                        target="_blank"
+                        className={styles.link}
+                    >
+                        Stripe&apos;s
+                    </Link>{" "}
+                    different policies in different countries, there are some
+                    countries which are not supported by Stripe for the Stripe
+                    features NexLiber needs. In your{" "}
+                    <Link href="/account" className={styles.link}>
+                        My Account
+                    </Link>{" "}
+                    page, select <b>My country is not in the list</b> should
+                    your country not be seen in the dropdown for <b>Country</b>.
+                    Don&apos;t worry, your experience with NexLiber will be the
+                    same as others whose countries are supported, only with a
+                    few differences:
+                </p>
                 <ul>
                     <li>
-                        All information and data collected by NexLiber (e.g.
-                        your name, email, etc.) will only be used on and for
-                        nexliber.com.
+                        You are not required to link your Stripe account; the{" "}
+                        <b>Link Stripe Account</b> button in your Creator
+                        Dashboard will not appear and instead,{" "}
+                        <b>Create Workbook</b> will immediately show.
                     </li>
                     <li>
-                        Should you delete your NexLiber account, any payments
-                        made by Learners for your Premium Workbook(s) starting
-                        from the time your account is successfully deleted will
-                        be received by NexLiber.
-                    </li>
-                    <li>
-                        Should you delete your NexLiber account, your
-                        Workbook(s) will display <b>Anonymous Creator</b>{" "}
-                        instead of your full name.
+                        You will not be able to create Premium Workbooks (but
+                        you can still create and read Free Workbooks, and
+                        purchase other&apos;s Premium Workbooks).
                     </li>
                 </ul>
+                <h2
+                    id="deleting-your-account"
+                    onClick={(e) => setURL(e.target)}
+                    style={{ cursor: "pointer" }}
+                >
+                    Deleting Your Account
+                </h2>
+                <p>
+                    Should you delete your NexLiber account, any payments made
+                    by Learners for your Premium Workbook(s) starting from the
+                    time your account is successfully deleted will be received
+                    by NexLiber. Also, your Workbook(s) will display{" "}
+                    <b>Anonymous Creator</b> instead of your full name.
+                </p>
             </section>
         </MainLayout>
     );
