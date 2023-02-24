@@ -432,6 +432,17 @@ const Account = () => {
                                 </option>
                             ))}
                         </select>
+                        <sub className={styles.sub}>
+                            If your country is not in the list, please read the{" "}
+                            <Link
+                                href="/docs#stripe-unsupported-countries"
+                                className={styles.link}
+                            >
+                                Stripe Unsupported Countries
+                            </Link>{" "}
+                            section of the docs. Don&apos;t worry, you can still
+                            learn and create with NexLiber.
+                        </sub>
                     </div>
 
                     <button
@@ -461,11 +472,11 @@ const Account = () => {
                         <p className={styles.text}>
                             Please read the{" "}
                             <Link
-                                href="/docs#important-notes"
+                                href="/docs#deleting-your-account"
                                 target="_blank"
                                 className={styles.link}
                             >
-                                Important Notes
+                                Deleting Your Account
                             </Link>{" "}
                             section of the docs before you click the button
                             below.

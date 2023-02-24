@@ -165,6 +165,15 @@
     column-gap: 1rem;
 }
 
+.sub {
+    font-size: 0.8rem;
+    color: var(--color-text-blur);
+    margin: 0;
+    padding-left: 0.5rem;
+    width: 100%;
+    text-align: left;
+}
+
 @media (max-width: 700px) {
     .container {
         width: 90vw;
