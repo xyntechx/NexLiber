@@ -491,11 +491,11 @@ const Docs = () => {
                     nexliber.com.
                 </p>
                 <h2
-                    id="stripe-unsupported-countries"
+                    id="stripe-requirements"
                     onClick={(e) => setURL(e.target)}
                     style={{ cursor: "pointer" }}
                 >
-                    Stripe Unsupported Countries
+                    Stripe Requirements
                 </h2>
                 <p>
                     Due to{" "}
@@ -508,15 +508,20 @@ const Docs = () => {
                     </Link>{" "}
                     different policies in different countries, there are some
                     countries which are not supported by Stripe for the Stripe
-                    features NexLiber needs. In your{" "}
+                    features NexLiber needs. Furthermore, Stripe requires that
+                    users be at least 18 years old to create the type of Stripe
+                    account NexLiber needs.
+                </p>
+                <p>
+                    In your{" "}
                     <Link href="/account" className={styles.link}>
                         My Account
                     </Link>{" "}
                     page, select <b>My country is not in the list</b> should
-                    your country not be seen in the dropdown for <b>Country</b>.
-                    Don&apos;t worry, your experience with NexLiber will be the
-                    same as others whose countries are supported, only with a
-                    few differences:
+                    your country not be seen in the dropdown for <b>Country</b>{" "}
+                    or if you are currently below 18. Don&apos;t worry, your
+                    experience with NexLiber will be the same as others whose
+                    countries are supported, only with a few differences:
                 </p>
                 <ul>
                     <li>
@@ -531,6 +536,26 @@ const Docs = () => {
                         purchase other&apos;s Premium Workbooks).
                     </li>
                 </ul>
+                <h2
+                    id="updating-your-country"
+                    onClick={(e) => setURL(e.target)}
+                    style={{ cursor: "pointer" }}
+                >
+                    Updating Your Country
+                </h2>
+                <p>
+                    Should you move to a different country or should you now
+                    fulfil Stripe&apos;s age requirement, please contact
+                    NexLiber via{" "}
+                    <Link
+                        href="mailto:teamxynlab@gmail.com"
+                        className={styles.link}
+                    >
+                        email
+                    </Link>
+                    . We will handle the update and inform you of the simple
+                    steps you need to take to successfully update your account.
+                </p>
                 <h2
                     id="deleting-your-account"
                     onClick={(e) => setURL(e.target)}
