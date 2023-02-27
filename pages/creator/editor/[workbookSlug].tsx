@@ -26,6 +26,7 @@ const Editor = () => {
     const [creatorID, setCreatorID] = useState("");
     const [storyblokNumID, setStoryblokNumID] = useState<number>();
     const [addedProject, setAddedProject] = useState<boolean>();
+    const [isPublished, setIsPublished] = useState<boolean>();
 
     // User Data
     const [completeUserData, setCompleteUserData] = useState(false);
@@ -58,7 +59,7 @@ const Editor = () => {
             const { data } = await supabase
                 .from("workbooks")
                 .select(
-                    "id, title, description, field, creator_id, storyblok_num_id, added_project"
+                    "id, title, description, field, creator_id, storyblok_num_id, added_project, is_published"
                 )
                 .eq("slug", workbookSlug);
             setWorkbookData(data);
@@ -90,6 +91,7 @@ const Editor = () => {
             setCreatorID(workbookData[0].creator_id);
             setStoryblokNumID(workbookData[0].storyblok_num_id);
             setAddedProject(workbookData[0].added_project);
+            setIsPublished(workbookData[0].is_published);
         }
     }, [workbookData]);
 
@@ -139,6 +141,11 @@ const Editor = () => {
 
         if (workbookSlug) loadWorkbookContent();
     }, [workbookSlug]);
+
+    useEffect(() => {
+        // Cannot edit a published Workbook
+        if (isPublished) window.location.href = `/workbook/${workbookSlug}`;
+    }, [isPublished]);
 
     useEffect(() => {
         const checkStripeAcc = () => {
