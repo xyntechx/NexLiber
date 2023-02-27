@@ -433,12 +433,13 @@ const Account = () => {
                             ))}
                         </select>
                         <sub className={styles.sub}>
-                            If your country is not in the list, please read the{" "}
+                            If your country is not in the list, or if you are
+                            below 18 years old, please read the{" "}
                             <Link
-                                href="/docs#stripe-unsupported-countries"
+                                href="/docs#stripe-requirements"
                                 className={styles.link}
                             >
-                                Stripe Unsupported Countries
+                                Stripe Requirements
                             </Link>{" "}
                             section of the docs. Don&apos;t worry, you can still
                             learn and create with NexLiber.
