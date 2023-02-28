@@ -167,6 +167,16 @@
     border: none;
 }
 
+.link {
+    color: var(--color-theme-blur);
+    transition: 0.15s;
+}
+
+.link:hover {
+    color: var(--color-theme);
+    cursor: pointer;
+}
+
 @media (max-width: 700px) {
     .container {
         width: 90vw;
