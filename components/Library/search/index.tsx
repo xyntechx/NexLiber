@@ -27,6 +27,10 @@ const Search = ({ setShowSearch, setWorkbooks, setIsSearching }: Props) => {
         "title" | "field" | "creator_name"
     >("title");
 
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === "Enter") searchWorkbook();
+    };
+
     const searchWorkbook = async () => {
         const { data } = await supabase
             .from("workbooks")
@@ -159,6 +163,7 @@ const Search = ({ setShowSearch, setWorkbooks, setIsSearching }: Props) => {
                         ref={searchInput}
                         placeholder="Search..."
                         type="text"
+                        onKeyDown={(e) => handleKeyDown(e)}
                         className={styles.input}
                     />
                     <button
