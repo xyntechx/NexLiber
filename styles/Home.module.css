@@ -41,6 +41,10 @@
     width: 50%;
 }
 
+.titleContainer {
+    align-items: flex-start;
+}
+
 .title,
 .maintitle {
     font-size: 2rem;
@@ -189,6 +193,7 @@
     .titleContainer {
         width: 100%;
         margin-bottom: 2rem;
+        align-items: center;
     }
 
     .maintitle,
