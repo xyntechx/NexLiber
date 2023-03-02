@@ -7,8 +7,12 @@ import { storyblokInit, apiPlugin, getStoryblokApi } from "@storyblok/react";
 import Alert from "../../../components/Alert";
 import Link from "next/link";
 import workbookFields from "../../../utils/workbookFields";
-import styles from "../../../styles/Creator.module.css";
 import WorkbookContent from "../../../components/WorkbookContent";
+import CodeMirror from "@uiw/react-codemirror";
+import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
+import { languages } from "@codemirror/language-data";
+import { oneDark } from "@codemirror/theme-one-dark";
+import styles from "../../../styles/Creator.module.css";
 
 const Editor = () => {
     const user = useUser();
@@ -145,7 +149,7 @@ const Editor = () => {
     useEffect(() => {
         // Cannot edit a published Workbook
         if (isPublished) window.location.href = `/workbook/${workbookSlug}`;
-    }, [isPublished]);
+    }, [isPublished, workbookSlug]);
 
     useEffect(() => {
         const checkStripeAcc = () => {
@@ -439,16 +443,28 @@ const Editor = () => {
                         </div>
                     </div>
                     {isEditing ? (
-                        <textarea
-                            value={content}
-                            onChange={(e) => {
-                                setContent(e.target.value);
-                                setNeedSave(true);
-                            }}
-                            placeholder="Write your Workbook here..."
-                            id="content"
-                            className={styles.editorArea}
-                        />
+                        <>
+                            <sub className={styles.sub}>
+                                When navigating using only your keyboard, press
+                                Esc+Tab to exit the code editor.
+                            </sub>
+                            <CodeMirror
+                                value={content}
+                                onChange={(value) => {
+                                    setContent(value);
+                                    setNeedSave(true);
+                                }}
+                                extensions={[
+                                    markdown({
+                                        base: markdownLanguage,
+                                        codeLanguages: languages,
+                                    }),
+                                ]}
+                                theme={oneDark}
+                                height="60vh"
+                                className={styles.editorArea}
+                            />
+                        </>
                     ) : (
                         <WorkbookContent {...{ content }} />
                     )}
