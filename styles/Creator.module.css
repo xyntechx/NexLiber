@@ -230,17 +230,20 @@
 }
 
 .editorArea {
-    min-width: 100%;
-    max-width: 100%;
+    width: 100%;
     min-height: 60vh;
-    border: none;
-    border-top: 1px solid var(--color-theme);
-    border-bottom: 1px solid var(--color-theme);
-    background: none;
-    outline: none;
-    color: var(--color-text);
-    padding: 0.5rem 0;
+    padding: 0;
     font-size: 1rem;
+}
+
+.sub {
+    font-size: 0.8rem;
+    color: var(--color-text-blur);
+    margin: 0;
+    margin-bottom: 0.5rem;
+    padding: 0;
+    width: 100%;
+    text-align: left;
 }
 
 @media (max-width: 700px) {
@@ -251,6 +254,10 @@
     .topDiv {
         justify-content: center;
         flex-direction: column;
+    }
+
+    .workbookDetails {
+        width: 90%;
     }
 
     .title {
@@ -273,6 +280,7 @@
         margin-top: 1rem;
         row-gap: 1rem;
         flex-direction: column;
+        width: 90%;
     }
 
     .mainDiv {
