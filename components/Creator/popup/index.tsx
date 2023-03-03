@@ -145,6 +145,7 @@ const CreateWorkbookPopup = ({ setShowCreatePopup, countryCode }: Props) => {
             field,
             type,
             slug,
+            status: "In Progress",
             lower_title: title.toLowerCase(),
             creator_id: user!.id,
             storyblok_id: data.story.uuid,
@@ -265,7 +266,9 @@ const CreateWorkbookPopup = ({ setShowCreatePopup, countryCode }: Props) => {
                     >
                         <option disabled />
                         <option value="Free">Free</option>
-                        {countryCode !== "OTHERS" && <option value="Premium">Premium</option>}
+                        {countryCode !== "OTHERS" && (
+                            <option value="Premium">Premium</option>
+                        )}
                     </select>
                     <sub className={styles.sub}>
                         Type cannot be edited once Workbook is created. Please
