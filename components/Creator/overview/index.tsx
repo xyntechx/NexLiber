@@ -5,22 +5,22 @@ import Link from "next/link";
 import styles from "./Overview.module.css";
 
 interface Workbook {
-    id: string;
-    title: string;
-    lower_title: string;
-    description: string;
-    field: string;
-    type: string;
-    slug: string;
-    creator_id: string;
-    status: string;
-    is_published: boolean;
-    publication_date: string;
-    storyblok_id: string;
-    storyblok_num_id: number;
-    added_project: boolean;
-    buyer_count: number;
-    publication_index: number;
+    id?: string;
+    title?: string;
+    lower_title?: string;
+    description?: string;
+    field?: string;
+    type?: string;
+    slug?: string;
+    creator_id?: string;
+    status?: string;
+    is_published?: boolean;
+    publication_date?: string;
+    storyblok_id?: string;
+    storyblok_num_id?: number;
+    added_project?: boolean;
+    buyer_count?: number;
+    publication_index?: number;
 }
 
 interface Props {
@@ -73,7 +73,7 @@ const WorkbookOverview = ({
             Published: "#22c55e",
         };
 
-        if (workbook) setStatusColor(statusToColor[workbook.status]);
+        if (workbook) setStatusColor(statusToColor[workbook.status!]);
     }, [workbook]);
 
     const deleteWorkbook = async () => {
@@ -189,7 +189,7 @@ const WorkbookOverview = ({
                                 Published On:{" "}
                                 <span style={{ fontWeight: "800" }}>
                                     {simplifyDate(
-                                        convertTZ(workbook.publication_date)
+                                        convertTZ(workbook.publication_date!)
                                     )}
                                 </span>
                             </p>
