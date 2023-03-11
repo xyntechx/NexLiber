@@ -58,6 +58,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
         const { error } = await supabase.from("workbooks").insert({
             ...data,
+            status: "In Progress",
             storyblok_id: storyblokData.story.uuid,
             storyblok_num_id: storyblokData.story.id,
         });
