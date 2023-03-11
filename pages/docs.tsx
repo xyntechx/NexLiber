@@ -239,6 +239,19 @@ const Docs = () => {
                     delete the Premium Workbook. The Workbook type cannot be
                     changed once your Workbook is successfully created.
                 </p>
+                <p>
+                    <b>Promo Code</b>: Joining NexLiber&apos;s{" "}
+                    <Link
+                        href="/community"
+                        target="_blank"
+                        className={styles.link}
+                    >
+                        Discord
+                    </Link>{" "}
+                    grants you a Promo Code for creating Premium Workbooks.
+                    Instead of paying S$5, you will pay only S$3 to create
+                    Premium Workbooks should you enter the correct Promo Code.
+                </p>
                 <h3
                     id="workbook-content"
                     onClick={(e) => setURL(e.target)}

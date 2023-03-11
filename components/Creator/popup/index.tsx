@@ -18,6 +18,7 @@ const CreateWorkbookPopup = ({ setShowCreatePopup, countryCode }: Props) => {
     const titleInput = useRef<HTMLInputElement>(null);
     const descriptionInput = useRef<HTMLInputElement>(null);
     const fieldInput = useRef<HTMLInputElement>(null);
+    const codeInput = useRef<HTMLInputElement>(null);
 
     const [field, setField] = useState<string>();
     const [type, setType] = useState<string>();
@@ -35,11 +36,18 @@ const CreateWorkbookPopup = ({ setShowCreatePopup, countryCode }: Props) => {
         const title = titleInput.current!.value;
         const description = descriptionInput.current!.value;
         const customField = fieldInput.current!.value;
+        const code = codeInput.current!.value;
 
         setLoading(true);
 
         if (!title || !description || !field || !type) {
             setErrorMessage("Please complete the form.");
+            setLoading(false);
+            return;
+        }
+
+        if (code && code !== process.env.NEXT_PUBLIC_PROMO_CODE) {
+            setErrorMessage("Invalid Promo Code.");
             setLoading(false);
             return;
         }
@@ -70,6 +78,7 @@ const CreateWorkbookPopup = ({ setShowCreatePopup, countryCode }: Props) => {
                     slug,
                     lower_title: title.toLowerCase(),
                     creator_id: user!.id,
+                    code,
                 };
 
                 const response = await fetch("/api/stripe-payment/creator", {
@@ -281,6 +290,17 @@ const CreateWorkbookPopup = ({ setShowCreatePopup, countryCode }: Props) => {
                         </Link>{" "}
                         before choosing your Workbook&apos;s type.
                     </sub>
+
+                    <label htmlFor="code" className={styles.inputlabel}>
+                        Promo Code
+                    </label>
+                    <input
+                        ref={codeInput}
+                        placeholder="Promo Code"
+                        id="code"
+                        type="text"
+                        className={styles.input}
+                    />
 
                     <button
                         onClick={() => createWorkbook()}
