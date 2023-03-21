@@ -33,10 +33,10 @@ const CreateWorkbookPopup = ({ setShowCreatePopup, countryCode }: Props) => {
     });
 
     const createWorkbook = async () => {
-        const title = titleInput.current!.value;
-        const description = descriptionInput.current!.value;
-        const customField = fieldInput.current!.value;
-        const code = codeInput.current!.value;
+        const title = titleInput.current!.value.trim();
+        const description = descriptionInput.current!.value.trim();
+        const customField = fieldInput.current!.value.trim();
+        const code = codeInput.current!.value.trim();
 
         setLoading(true);
 
