@@ -1,5 +1,5 @@
 # NexLiber
-Create to Learn.
+Create to Learn
 
 ## 🚀 Technologies
 - Next.js
