@@ -7,12 +7,21 @@ import { storyblokInit, apiPlugin, getStoryblokApi } from "@storyblok/react";
 import Alert from "../../../components/Alert";
 import Link from "next/link";
 import workbookFields from "../../../utils/workbookFields";
+import langs from "../../../utils/langs";
 import WorkbookContent from "../../../components/WorkbookContent";
 import CodeMirror from "@uiw/react-codemirror";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
 import { oneDark } from "@codemirror/theme-one-dark";
 import styles from "../../../styles/Creator.module.css";
+
+interface IContentData {
+    // TODO: Add type "asset" with src and alt fields
+    id: number;
+    type: "text" | "code";
+    content: string;
+    language?: string; // only for code blocks
+}
 
 const Editor = () => {
     const user = useUser();
@@ -31,6 +40,7 @@ const Editor = () => {
     const [storyblokNumID, setStoryblokNumID] = useState<number>();
     const [addedProject, setAddedProject] = useState<boolean>();
     const [isPublished, setIsPublished] = useState<boolean>();
+    const [contentData, setContentData] = useState<IContentData[]>([]);
 
     // User Data
     const [completeUserData, setCompleteUserData] = useState(false);
@@ -122,9 +132,9 @@ const Editor = () => {
     }, [creatorID, user]);
 
     useEffect(() => {
-        if (addedProject && content) setNeedSubmit(true);
+        if (addedProject) setNeedSubmit(true);
         else setNeedSubmit(false);
-    }, [addedProject, content]);
+    }, [addedProject]);
 
     useEffect(() => {
         if (fieldChangeTrigger) {
@@ -140,7 +150,13 @@ const Editor = () => {
                 `cdn/stories/${workbookSlug}`,
                 {}
             );
-            setContent(data.story.content.markdown);
+            setContentData([
+                {
+                    id: 0,
+                    type: "text",
+                    content: data.story.content.markdown,
+                },
+            ]);
         };
 
         if (workbookSlug) loadWorkbookContent();
@@ -175,6 +191,38 @@ const Editor = () => {
         if (stripeID) checkStripeAcc();
     }, [stripeID]);
 
+    const handleContentChange = (value: string, elem: IContentData) => {
+        const data: IContentData[] = [
+            ...contentData.slice(0, elem.id),
+            {
+                ...elem,
+                content: value,
+            },
+            ...contentData.slice(elem.id + 1, contentData.length),
+        ];
+        setContentData(data);
+        setNeedSave(true);
+    };
+
+    const updateContent = (mode: "preview" | "save" | "submit") => {
+        if (mode == "preview") {
+            let tempContent = "";
+
+            for (const elem of contentData) {
+                if (elem.type === "text") tempContent += `${elem.content}\n\n`;
+                else if (elem.type === "code")
+                    tempContent += `\`\`\`${elem.language}\n${elem.content}\n\`\`\`\n\n`;
+            }
+
+            setContent(tempContent);
+            setIsEditing(!isEditing);
+        } else if (mode === "save") {
+            saveWorkbook(false);
+        } else if (mode === "submit") {
+            submitDraft();
+        }
+    };
+
     const saveWorkbook = async (isSubmit: boolean) => {
         setSaveLoading(true);
 
@@ -184,6 +232,14 @@ const Editor = () => {
             );
             setSaveLoading(false);
             return;
+        }
+
+        let content = "";
+
+        for (const elem of contentData) {
+            if (elem.type === "text") content += `${elem.content}\n\n`;
+            else if (elem.type === "code")
+                content += `\`\`\`${elem.language}\n${elem.content}\n\`\`\`\n\n`;
         }
 
         await fetch(
@@ -201,7 +257,7 @@ const Editor = () => {
                         content: {
                             component: "content",
                             title: title,
-                            markdown: content,
+                            markdown: content.trim(),
                         },
                     },
                     publish: 1,
@@ -315,7 +371,10 @@ const Editor = () => {
                 }}
             />
             {user && completeUserData && isCompleteStripe && isMyWorkbook ? (
-                <section className={styles.container}>
+                <section
+                    className={styles.container}
+                    style={{ justifyContent: "flex-start" }}
+                >
                     <div className={styles.topDiv}>
                         <div className={styles.workbookDetails}>
                             <h1
@@ -385,7 +444,9 @@ const Editor = () => {
                         </div>
                         <div className={styles.buttons}>
                             <button
-                                onClick={() => setIsEditing(!isEditing)}
+                                onClick={() => {
+                                    updateContent("preview");
+                                }}
                                 className={styles.button}
                                 aria-label={`Switch to ${
                                     isEditing ? "Preview" : "Editing"
@@ -397,7 +458,9 @@ const Editor = () => {
                                 {isEditing ? "Preview" : "Edit"}
                             </button>
                             <button
-                                onClick={() => saveWorkbook(false)}
+                                onClick={() => {
+                                    updateContent("save");
+                                }}
                                 className={styles.blueButton}
                                 aria-label="Save Workbook Draft"
                                 title={
@@ -419,7 +482,9 @@ const Editor = () => {
                                 {saveLoading ? "Loading..." : "Save"}
                             </button>
                             <button
-                                onClick={() => submitDraft()}
+                                onClick={() => {
+                                    updateContent("submit");
+                                }}
                                 className={styles.greenButton}
                                 aria-label="Submit Workbook Draft"
                                 title={
@@ -443,28 +508,123 @@ const Editor = () => {
                         </div>
                     </div>
                     {isEditing ? (
-                        <>
-                            <sub className={styles.sub}>
-                                When navigating using only your keyboard, press
-                                Esc+Tab to exit the code editor.
-                            </sub>
-                            <CodeMirror
-                                value={content}
-                                onChange={(value) => {
-                                    setContent(value);
-                                    setNeedSave(true);
-                                }}
-                                extensions={[
-                                    markdown({
-                                        base: markdownLanguage,
-                                        codeLanguages: languages,
-                                    }),
-                                ]}
-                                theme={oneDark}
-                                height="60vh"
-                                className={styles.editorArea}
-                            />
-                        </>
+                        <div className={styles.editor}>
+                            {contentData.map((elem) => (
+                                <>
+                                    {elem.type === "text" && (
+                                        <CodeMirror
+                                            key={elem.id}
+                                            value={elem.content}
+                                            onChange={(value) =>
+                                                handleContentChange(value, elem)
+                                            }
+                                            extensions={[
+                                                markdown({
+                                                    base: markdownLanguage,
+                                                    codeLanguages: languages,
+                                                }),
+                                            ]}
+                                            basicSetup={{
+                                                lineNumbers: false,
+                                            }}
+                                            theme={oneDark}
+                                            className={styles.editorArea}
+                                        />
+                                    )}
+                                    {elem.type === "code" && (
+                                        <div className={styles.codeBlock}>
+                                            <select
+                                                value={elem.language}
+                                                className={styles.langSelect}
+                                                onChange={(e) => {
+                                                    const data: IContentData[] =
+                                                        [
+                                                            ...contentData.slice(
+                                                                0,
+                                                                elem.id
+                                                            ),
+                                                            {
+                                                                ...elem,
+                                                                language:
+                                                                    e
+                                                                        .currentTarget
+                                                                        .value,
+                                                            },
+                                                            ...contentData.slice(
+                                                                elem.id + 1,
+                                                                contentData.length
+                                                            ),
+                                                        ];
+                                                    setContentData(data);
+                                                    setNeedSave(true);
+                                                }}
+                                            >
+                                                <option
+                                                    disabled
+                                                    selected
+                                                    value=""
+                                                >
+                                                    Select Language
+                                                </option>
+                                                {langs.map((lang) => (
+                                                    <option
+                                                        key={lang.value}
+                                                        value={lang.value}
+                                                    >
+                                                        {lang.display}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <CodeMirror
+                                                key={elem.id}
+                                                value={elem.content}
+                                                onChange={(value) =>
+                                                    handleContentChange(
+                                                        value,
+                                                        elem
+                                                    )
+                                                }
+                                                theme={oneDark}
+                                                className={styles.editorArea}
+                                            />
+                                        </div>
+                                    )}
+                                </>
+                            ))}
+                            <div className={styles.addBtnContainer}>
+                                <button
+                                    onClick={() =>
+                                        setContentData([
+                                            ...contentData,
+                                            {
+                                                id: contentData.length,
+                                                type: "text",
+                                                content: "",
+                                            },
+                                        ])
+                                    }
+                                    className={styles.button}
+                                >
+                                    + Text
+                                </button>
+                                <button
+                                    onClick={() =>
+                                        setContentData([
+                                            ...contentData,
+                                            {
+                                                id: contentData.length,
+                                                type: "code",
+                                                content: "",
+                                                language: "",
+                                            },
+                                        ])
+                                    }
+                                    className={styles.button}
+                                >
+                                    + Code
+                                </button>
+                            </div>
+                        </div>
                     ) : (
                         <WorkbookContent {...{ content }} />
                     )}
