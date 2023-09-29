@@ -5,6 +5,7 @@ import { supabase } from "../../../utils/supabase";
 import { useUser } from "@supabase/auth-helpers-react";
 import { storyblokInit, apiPlugin, getStoryblokApi } from "@storyblok/react";
 import Alert from "../../../components/Alert";
+import Image from "next/image";
 import Link from "next/link";
 import workbookFields from "../../../utils/workbookFields";
 import langs from "../../../utils/langs";
@@ -17,11 +18,11 @@ import { v4 as uuidv4 } from "uuid";
 import styles from "../../../styles/Creator.module.css";
 
 interface IContentData {
-    // TODO: Add type "asset" with src and alt fields
     id: string;
-    type: "text" | "code";
+    type: "text" | "code" | "asset";
     content: string;
     language?: string; // only for code blocks
+    src?: string; // only for assets
 }
 
 const Editor = () => {
@@ -63,6 +64,7 @@ const Editor = () => {
     const [needSave, setNeedSave] = useState(false);
     const [needSubmit, setNeedSubmit] = useState(false);
     const [fieldChangeTrigger, setFieldChangeTrigger] = useState(0); // only used as toggle
+    const [uploading, setUploading] = useState(false);
 
     storyblokInit({
         accessToken: process.env.NEXT_PUBLIC_STORYBLOK_PUBLIC_TOKEN,
@@ -208,7 +210,10 @@ const Editor = () => {
         setNeedSave(true);
     };
 
-    const addNewBlock = (elem: IContentData, type: "text" | "code") => {
+    const addNewBlock = (
+        elem: IContentData,
+        type: "text" | "code" | "asset"
+    ) => {
         const data: IContentData[] = [
             ...contentData.slice(0, contentData.indexOf(elem) + 1),
             {
@@ -232,6 +237,7 @@ const Editor = () => {
                 if (elem.type === "text") tempContent += `${elem.content}\n\n`;
                 else if (elem.type === "code")
                     tempContent += `\`\`\`${elem.language}\n${elem.content}\n\`\`\`\n\n`;
+                else tempContent += `![Asset](${elem.src})`;
             }
 
             setContent(tempContent);
@@ -260,6 +266,7 @@ const Editor = () => {
             if (elem.type === "text") content += `${elem.content}\n\n`;
             else if (elem.type === "code")
                 content += `\`\`\`${elem.language}\n${elem.content}\n\`\`\`\n\n`;
+            else content += `![Asset](${elem.src})`;
         }
 
         await fetch(
@@ -374,6 +381,70 @@ const Editor = () => {
                 setSuccessMessage("Workbook draft successfully submitted.");
             else setErrorMessage("An error has occurred. Please try again.");
         });
+    };
+
+    const uploadAsset = async (event: any) => {
+        setUploading(true);
+
+        if (!event.target.files || event.target.files!.length === 0) {
+            setErrorMessage("Please select an image/video to upload.");
+            setUploading(false);
+            return "";
+        }
+
+        const file = event.target.files[0];
+
+        if (file.size / 1024 ** 2 > 0.1) {
+            // 100kB limit
+            setErrorMessage("Please select an image/video less than 100kB.");
+            setUploading(false);
+            return "";
+        }
+
+        const fileExt = file.name.split(".").pop();
+        const filePath = `${user!.id}.${fileExt}`;
+
+        let { error } = await supabase.storage
+            .from("workbookAssets")
+            .upload(filePath, file, { upsert: true });
+
+        if (error) {
+            setErrorMessage(error.message);
+            setUploading(false);
+            return "";
+        }
+
+        setUploading(false);
+        return filePath;
+    };
+
+    const handleAssetUpload = async (event: any, elem: IContentData) => {
+        const filePath = await uploadAsset(event);
+        handleContentChange(filePath, elem);
+        downloadAsset(filePath, elem);
+    };
+
+    const downloadAsset = async (filePath: string, elem: IContentData) => {
+        const { data: imgData, error } = await supabase.storage
+            .from("workbookAssets")
+            .download(filePath);
+
+        if (!error) {
+            const data: IContentData[] = [
+                ...contentData.slice(0, contentData.indexOf(elem)),
+                {
+                    ...elem,
+                    content: filePath,
+                    src: URL.createObjectURL(imgData),
+                },
+                ...contentData.slice(
+                    contentData.indexOf(elem) + 1,
+                    contentData.length
+                ),
+            ];
+            setContentData(data);
+            setNeedSave(true);
+        }
     };
 
     return (
@@ -581,6 +652,17 @@ const Editor = () => {
                                                 >
                                                     + Code
                                                 </button>
+                                                <button
+                                                    onClick={() =>
+                                                        addNewBlock(
+                                                            elem,
+                                                            "asset"
+                                                        )
+                                                    }
+                                                    className={styles.button}
+                                                >
+                                                    + Asset
+                                                </button>
                                             </div>
                                         </>
                                     )}
@@ -675,6 +757,110 @@ const Editor = () => {
                                                     className={styles.button}
                                                 >
                                                     + Code
+                                                </button>
+                                                <button
+                                                    onClick={() =>
+                                                        addNewBlock(
+                                                            elem,
+                                                            "asset"
+                                                        )
+                                                    }
+                                                    className={styles.button}
+                                                >
+                                                    + Asset
+                                                </button>
+                                            </div>
+                                        </>
+                                    )}
+                                    {elem.type === "asset" && (
+                                        <>
+                                            <label
+                                                htmlFor="asset"
+                                                style={{
+                                                    cursor: "pointer",
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+                                                    flexDirection: "column",
+                                                }}
+                                            >
+                                                <input
+                                                    type="file"
+                                                    accept="video/*,image/*"
+                                                    name="asset"
+                                                    id="asset"
+                                                    style={{
+                                                        display: "none",
+                                                        cursor: "default",
+                                                    }}
+                                                    onChange={async (event) => {
+                                                        handleAssetUpload(
+                                                            event,
+                                                            elem
+                                                        );
+                                                    }}
+                                                    disabled={uploading}
+                                                />
+                                                {elem.src ? (
+                                                    <Image
+                                                        src={elem.src!}
+                                                        alt="Asset"
+                                                        width={100}
+                                                        height={100}
+                                                        className={styles.asset}
+                                                    />
+                                                ) : (
+                                                    <div
+                                                        className={
+                                                            styles.button
+                                                        }
+                                                        style={{
+                                                            marginBottom:
+                                                                "1rem",
+                                                        }}
+                                                    >
+                                                        Select image/video to
+                                                        upload
+                                                    </div>
+                                                )}
+                                            </label>
+                                            <div
+                                                className={
+                                                    styles.addBtnContainer
+                                                }
+                                            >
+                                                <button
+                                                    onClick={() =>
+                                                        addNewBlock(
+                                                            elem,
+                                                            "text"
+                                                        )
+                                                    }
+                                                    className={styles.button}
+                                                >
+                                                    + Text
+                                                </button>
+                                                <button
+                                                    onClick={() =>
+                                                        addNewBlock(
+                                                            elem,
+                                                            "code"
+                                                        )
+                                                    }
+                                                    className={styles.button}
+                                                >
+                                                    + Code
+                                                </button>
+                                                <button
+                                                    onClick={() =>
+                                                        addNewBlock(
+                                                            elem,
+                                                            "asset"
+                                                        )
+                                                    }
+                                                    className={styles.button}
+                                                >
+                                                    + Asset
                                                 </button>
                                             </div>
                                         </>
