@@ -13,11 +13,12 @@ import CodeMirror from "@uiw/react-codemirror";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
 import { oneDark } from "@codemirror/theme-one-dark";
+import { v4 as uuidv4 } from "uuid";
 import styles from "../../../styles/Creator.module.css";
 
 interface IContentData {
     // TODO: Add type "asset" with src and alt fields
-    id: number;
+    id: string;
     type: "text" | "code";
     content: string;
     language?: string; // only for code blocks
@@ -152,7 +153,7 @@ const Editor = () => {
             );
             setContentData([
                 {
-                    id: 0,
+                    id: uuidv4(),
                     type: "text",
                     content: data.story.content.markdown,
                 },
@@ -193,15 +194,34 @@ const Editor = () => {
 
     const handleContentChange = (value: string, elem: IContentData) => {
         const data: IContentData[] = [
-            ...contentData.slice(0, elem.id),
+            ...contentData.slice(0, contentData.indexOf(elem)),
             {
                 ...elem,
                 content: value,
             },
-            ...contentData.slice(elem.id + 1, contentData.length),
+            ...contentData.slice(
+                contentData.indexOf(elem) + 1,
+                contentData.length
+            ),
         ];
         setContentData(data);
         setNeedSave(true);
+    };
+
+    const addNewBlock = (elem: IContentData, type: "text" | "code") => {
+        const data: IContentData[] = [
+            ...contentData.slice(0, contentData.indexOf(elem) + 1),
+            {
+                id: uuidv4(),
+                type,
+                content: "",
+            },
+            ...contentData.slice(
+                contentData.indexOf(elem) + 1,
+                contentData.length
+            ),
+        ];
+        setContentData(data);
     };
 
     const updateContent = (mode: "preview" | "save" | "submit") => {
@@ -510,73 +530,10 @@ const Editor = () => {
                     {isEditing ? (
                         <div className={styles.editor}>
                             {contentData.map((elem) => (
-                                <>
+                                <div key={elem.id} style={{ width: "100%" }}>
                                     {elem.type === "text" && (
-                                        <CodeMirror
-                                            key={elem.id}
-                                            value={elem.content}
-                                            onChange={(value) =>
-                                                handleContentChange(value, elem)
-                                            }
-                                            extensions={[
-                                                markdown({
-                                                    base: markdownLanguage,
-                                                    codeLanguages: languages,
-                                                }),
-                                            ]}
-                                            basicSetup={{
-                                                lineNumbers: false,
-                                            }}
-                                            theme={oneDark}
-                                            className={styles.editorArea}
-                                        />
-                                    )}
-                                    {elem.type === "code" && (
-                                        <div className={styles.codeBlock}>
-                                            <select
-                                                value={elem.language}
-                                                className={styles.langSelect}
-                                                onChange={(e) => {
-                                                    const data: IContentData[] =
-                                                        [
-                                                            ...contentData.slice(
-                                                                0,
-                                                                elem.id
-                                                            ),
-                                                            {
-                                                                ...elem,
-                                                                language:
-                                                                    e
-                                                                        .currentTarget
-                                                                        .value,
-                                                            },
-                                                            ...contentData.slice(
-                                                                elem.id + 1,
-                                                                contentData.length
-                                                            ),
-                                                        ];
-                                                    setContentData(data);
-                                                    setNeedSave(true);
-                                                }}
-                                            >
-                                                <option
-                                                    disabled
-                                                    selected
-                                                    value=""
-                                                >
-                                                    Select Language
-                                                </option>
-                                                {langs.map((lang) => (
-                                                    <option
-                                                        key={lang.value}
-                                                        value={lang.value}
-                                                    >
-                                                        {lang.display}
-                                                    </option>
-                                                ))}
-                                            </select>
+                                        <>
                                             <CodeMirror
-                                                key={elem.id}
                                                 value={elem.content}
                                                 onChange={(value) =>
                                                     handleContentChange(
@@ -584,46 +541,146 @@ const Editor = () => {
                                                         elem
                                                     )
                                                 }
+                                                extensions={[
+                                                    markdown({
+                                                        base: markdownLanguage,
+                                                        codeLanguages:
+                                                            languages,
+                                                    }),
+                                                ]}
+                                                basicSetup={{
+                                                    lineNumbers: false,
+                                                }}
                                                 theme={oneDark}
                                                 className={styles.editorArea}
                                             />
-                                        </div>
+                                            <div
+                                                className={
+                                                    styles.addBtnContainer
+                                                }
+                                            >
+                                                <button
+                                                    onClick={() =>
+                                                        addNewBlock(
+                                                            elem,
+                                                            "text"
+                                                        )
+                                                    }
+                                                    className={styles.button}
+                                                >
+                                                    + Text
+                                                </button>
+                                                <button
+                                                    onClick={() =>
+                                                        addNewBlock(
+                                                            elem,
+                                                            "code"
+                                                        )
+                                                    }
+                                                    className={styles.button}
+                                                >
+                                                    + Code
+                                                </button>
+                                            </div>
+                                        </>
                                     )}
-                                </>
+                                    {elem.type === "code" && (
+                                        <>
+                                            <div className={styles.codeBlock}>
+                                                <select
+                                                    value={elem.language}
+                                                    className={
+                                                        styles.langSelect
+                                                    }
+                                                    onChange={(e) => {
+                                                        const data: IContentData[] =
+                                                            [
+                                                                ...contentData.slice(
+                                                                    0,
+                                                                    contentData.indexOf(
+                                                                        elem
+                                                                    )
+                                                                ),
+                                                                {
+                                                                    ...elem,
+                                                                    language:
+                                                                        e
+                                                                            .currentTarget
+                                                                            .value,
+                                                                },
+                                                                ...contentData.slice(
+                                                                    contentData.indexOf(
+                                                                        elem
+                                                                    ) + 1,
+                                                                    contentData.length
+                                                                ),
+                                                            ];
+                                                        setContentData(data);
+                                                        setNeedSave(true);
+                                                    }}
+                                                >
+                                                    <option
+                                                        disabled
+                                                        selected
+                                                        value=""
+                                                    >
+                                                        Select Language
+                                                    </option>
+                                                    {langs.map((lang) => (
+                                                        <option
+                                                            key={lang.value}
+                                                            value={lang.value}
+                                                        >
+                                                            {lang.display}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                <CodeMirror
+                                                    value={elem.content}
+                                                    onChange={(value) =>
+                                                        handleContentChange(
+                                                            value,
+                                                            elem
+                                                        )
+                                                    }
+                                                    theme={oneDark}
+                                                    className={
+                                                        styles.editorArea
+                                                    }
+                                                />
+                                            </div>
+                                            <div
+                                                className={
+                                                    styles.addBtnContainer
+                                                }
+                                            >
+                                                <button
+                                                    onClick={() =>
+                                                        addNewBlock(
+                                                            elem,
+                                                            "text"
+                                                        )
+                                                    }
+                                                    className={styles.button}
+                                                >
+                                                    + Text
+                                                </button>
+                                                <button
+                                                    onClick={() =>
+                                                        addNewBlock(
+                                                            elem,
+                                                            "code"
+                                                        )
+                                                    }
+                                                    className={styles.button}
+                                                >
+                                                    + Code
+                                                </button>
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
                             ))}
-                            <div className={styles.addBtnContainer}>
-                                <button
-                                    onClick={() =>
-                                        setContentData([
-                                            ...contentData,
-                                            {
-                                                id: contentData.length,
-                                                type: "text",
-                                                content: "",
-                                            },
-                                        ])
-                                    }
-                                    className={styles.button}
-                                >
-                                    + Text
-                                </button>
-                                <button
-                                    onClick={() =>
-                                        setContentData([
-                                            ...contentData,
-                                            {
-                                                id: contentData.length,
-                                                type: "code",
-                                                content: "",
-                                                language: "",
-                                            },
-                                        ])
-                                    }
-                                    className={styles.button}
-                                >
-                                    + Code
-                                </button>
-                            </div>
                         </div>
                     ) : (
                         <WorkbookContent {...{ content }} />
