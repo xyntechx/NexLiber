@@ -229,6 +229,17 @@ const Editor = () => {
         setContentData(data);
     };
 
+    const deleteBlock = (elem: IContentData) => {
+        const data: IContentData[] = [
+            ...contentData.slice(0, contentData.indexOf(elem)),
+            ...contentData.slice(
+                contentData.indexOf(elem) + 1,
+                contentData.length
+            ),
+        ];
+        setContentData(data);
+    };
+
     const updateContent = (mode: "preview" | "save" | "submit") => {
         if (mode == "preview") {
             let tempContent = "";
@@ -424,27 +435,25 @@ const Editor = () => {
         downloadAsset(filePath, elem);
     };
 
-    const downloadAsset = async (filePath: string, elem: IContentData) => {
-        const { data: imgData, error } = await supabase.storage
+    const downloadAsset = (filePath: string, elem: IContentData) => {
+        const { data: imgData } = supabase.storage
             .from("workbookAssets")
-            .download(filePath);
+            .getPublicUrl(filePath);
 
-        if (!error) {
-            const data: IContentData[] = [
-                ...contentData.slice(0, contentData.indexOf(elem)),
-                {
-                    ...elem,
-                    content: filePath,
-                    src: URL.createObjectURL(imgData),
-                },
-                ...contentData.slice(
-                    contentData.indexOf(elem) + 1,
-                    contentData.length
-                ),
-            ];
-            setContentData(data);
-            setNeedSave(true);
-        }
+        const data: IContentData[] = [
+            ...contentData.slice(0, contentData.indexOf(elem)),
+            {
+                ...elem,
+                content: filePath,
+                src: imgData.publicUrl,
+            },
+            ...contentData.slice(
+                contentData.indexOf(elem) + 1,
+                contentData.length
+            ),
+        ];
+        setContentData(data);
+        setNeedSave(true);
     };
 
     return (
@@ -604,27 +613,46 @@ const Editor = () => {
                                 <div key={elem.id} style={{ width: "100%" }}>
                                     {elem.type === "text" && (
                                         <>
-                                            <CodeMirror
-                                                value={elem.content}
-                                                onChange={(value) =>
-                                                    handleContentChange(
-                                                        value,
-                                                        elem
-                                                    )
-                                                }
-                                                extensions={[
-                                                    markdown({
-                                                        base: markdownLanguage,
-                                                        codeLanguages:
-                                                            languages,
-                                                    }),
-                                                ]}
-                                                basicSetup={{
-                                                    lineNumbers: false,
-                                                }}
-                                                theme={oneDark}
-                                                className={styles.editorArea}
-                                            />
+                                            <div className={styles.editorCell}>
+                                                <CodeMirror
+                                                    value={elem.content}
+                                                    onChange={(value) =>
+                                                        handleContentChange(
+                                                            value,
+                                                            elem
+                                                        )
+                                                    }
+                                                    extensions={[
+                                                        markdown({
+                                                            base: markdownLanguage,
+                                                            codeLanguages:
+                                                                languages,
+                                                        }),
+                                                    ]}
+                                                    basicSetup={{
+                                                        lineNumbers: false,
+                                                    }}
+                                                    theme={oneDark}
+                                                    className={
+                                                        styles.editorArea
+                                                    }
+                                                />
+                                                {contentData.length > 1 && (
+                                                    <button
+                                                        onClick={() =>
+                                                            deleteBlock(elem)
+                                                        }
+                                                        className={
+                                                            styles.button
+                                                        }
+                                                        style={{
+                                                            minWidth: "40px",
+                                                        }}
+                                                    >
+                                                        X
+                                                    </button>
+                                                )}
+                                            </div>
                                             <div
                                                 className={
                                                     styles.addBtnContainer
@@ -717,19 +745,43 @@ const Editor = () => {
                                                         </option>
                                                     ))}
                                                 </select>
-                                                <CodeMirror
-                                                    value={elem.content}
-                                                    onChange={(value) =>
-                                                        handleContentChange(
-                                                            value,
-                                                            elem
-                                                        )
-                                                    }
-                                                    theme={oneDark}
+                                                <div
                                                     className={
-                                                        styles.editorArea
+                                                        styles.editorCell
                                                     }
-                                                />
+                                                >
+                                                    <CodeMirror
+                                                        value={elem.content}
+                                                        onChange={(value) =>
+                                                            handleContentChange(
+                                                                value,
+                                                                elem
+                                                            )
+                                                        }
+                                                        theme={oneDark}
+                                                        className={
+                                                            styles.editorArea
+                                                        }
+                                                    />
+                                                    {contentData.length > 1 && (
+                                                        <button
+                                                            onClick={() =>
+                                                                deleteBlock(
+                                                                    elem
+                                                                )
+                                                            }
+                                                            className={
+                                                                styles.button
+                                                            }
+                                                            style={{
+                                                                minWidth:
+                                                                    "40px",
+                                                            }}
+                                                        >
+                                                            X
+                                                        </button>
+                                                    )}
+                                                </div>
                                             </div>
                                             <div
                                                 className={
@@ -774,56 +826,80 @@ const Editor = () => {
                                     )}
                                     {elem.type === "asset" && (
                                         <>
-                                            <label
-                                                htmlFor="asset"
-                                                style={{
-                                                    cursor: "pointer",
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    justifyContent: "center",
-                                                    flexDirection: "column",
-                                                }}
-                                            >
-                                                <input
-                                                    type="file"
-                                                    accept="video/*,image/*"
-                                                    name="asset"
-                                                    id="asset"
+                                            <div className={styles.editorCell}>
+                                                <label
+                                                    htmlFor="asset"
                                                     style={{
-                                                        display: "none",
-                                                        cursor: "default",
+                                                        cursor: "pointer",
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        justifyContent:
+                                                            "center",
+                                                        flexDirection: "column",
+                                                        width: "100%",
+                                                        margin: "0",
                                                     }}
-                                                    onChange={async (event) => {
-                                                        handleAssetUpload(
-                                                            event,
-                                                            elem
-                                                        );
-                                                    }}
-                                                    disabled={uploading}
-                                                />
-                                                {elem.src ? (
-                                                    <Image
-                                                        src={elem.src!}
-                                                        alt="Asset"
-                                                        width={100}
-                                                        height={100}
-                                                        className={styles.asset}
+                                                >
+                                                    <input
+                                                        type="file"
+                                                        accept="video/*,image/*"
+                                                        name="asset"
+                                                        id="asset"
+                                                        style={{
+                                                            display: "none",
+                                                            cursor: "default",
+                                                        }}
+                                                        onChange={async (
+                                                            event
+                                                        ) => {
+                                                            handleAssetUpload(
+                                                                event,
+                                                                elem
+                                                            );
+                                                        }}
+                                                        disabled={uploading}
                                                     />
-                                                ) : (
-                                                    <div
+                                                    {elem.src ? (
+                                                        <Image
+                                                            src={elem.src}
+                                                            alt="Asset"
+                                                            width={100}
+                                                            height={100}
+                                                            className={
+                                                                styles.asset
+                                                            }
+                                                        />
+                                                    ) : (
+                                                        <div
+                                                            className={
+                                                                styles.button
+                                                            }
+                                                            style={{
+                                                                marginBottom:
+                                                                    "1rem",
+                                                            }}
+                                                        >
+                                                            Select image/video
+                                                            to upload
+                                                        </div>
+                                                    )}
+                                                </label>
+                                                {contentData.length > 1 && (
+                                                    <button
+                                                        onClick={() =>
+                                                            deleteBlock(elem)
+                                                        }
                                                         className={
                                                             styles.button
                                                         }
                                                         style={{
-                                                            marginBottom:
-                                                                "1rem",
+                                                            minWidth: "40px",
                                                         }}
                                                     >
-                                                        Select image/video to
-                                                        upload
-                                                    </div>
+                                                        X
+                                                    </button>
                                                 )}
-                                            </label>
+                                            </div>
                                             <div
                                                 className={
                                                     styles.addBtnContainer
