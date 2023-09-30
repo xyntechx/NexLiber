@@ -5,14 +5,25 @@ import { supabase } from "../../../utils/supabase";
 import { useUser } from "@supabase/auth-helpers-react";
 import { storyblokInit, apiPlugin, getStoryblokApi } from "@storyblok/react";
 import Alert from "../../../components/Alert";
+import Image from "next/image";
 import Link from "next/link";
 import workbookFields from "../../../utils/workbookFields";
+import langs from "../../../utils/langs";
 import WorkbookContent from "../../../components/WorkbookContent";
 import CodeMirror from "@uiw/react-codemirror";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
 import { oneDark } from "@codemirror/theme-one-dark";
+import { v4 as uuidv4 } from "uuid";
 import styles from "../../../styles/Creator.module.css";
+
+interface IContentData {
+    id: string;
+    type: "text" | "code" | "asset";
+    content: string;
+    language?: string; // only for code blocks
+    src?: string; // only for assets
+}
 
 const Editor = () => {
     const user = useUser();
@@ -31,6 +42,7 @@ const Editor = () => {
     const [storyblokNumID, setStoryblokNumID] = useState<number>();
     const [addedProject, setAddedProject] = useState<boolean>();
     const [isPublished, setIsPublished] = useState<boolean>();
+    const [contentData, setContentData] = useState<IContentData[]>([]);
 
     // User Data
     const [completeUserData, setCompleteUserData] = useState(false);
@@ -52,6 +64,7 @@ const Editor = () => {
     const [needSave, setNeedSave] = useState(false);
     const [needSubmit, setNeedSubmit] = useState(false);
     const [fieldChangeTrigger, setFieldChangeTrigger] = useState(0); // only used as toggle
+    const [uploading, setUploading] = useState(false);
 
     storyblokInit({
         accessToken: process.env.NEXT_PUBLIC_STORYBLOK_PUBLIC_TOKEN,
@@ -122,9 +135,9 @@ const Editor = () => {
     }, [creatorID, user]);
 
     useEffect(() => {
-        if (addedProject && content) setNeedSubmit(true);
+        if (addedProject) setNeedSubmit(true);
         else setNeedSubmit(false);
-    }, [addedProject, content]);
+    }, [addedProject]);
 
     useEffect(() => {
         if (fieldChangeTrigger) {
@@ -140,7 +153,13 @@ const Editor = () => {
                 `cdn/stories/${workbookSlug}`,
                 {}
             );
-            setContent(data.story.content.markdown);
+            setContentData([
+                {
+                    id: uuidv4(),
+                    type: "text",
+                    content: data.story.content.markdown,
+                },
+            ]);
         };
 
         if (workbookSlug) loadWorkbookContent();
@@ -175,6 +194,72 @@ const Editor = () => {
         if (stripeID) checkStripeAcc();
     }, [stripeID]);
 
+    const handleContentChange = (value: string, elem: IContentData) => {
+        const data: IContentData[] = [
+            ...contentData.slice(0, contentData.indexOf(elem)),
+            {
+                ...elem,
+                content: value,
+            },
+            ...contentData.slice(
+                contentData.indexOf(elem) + 1,
+                contentData.length
+            ),
+        ];
+        setContentData(data);
+        setNeedSave(true);
+    };
+
+    const addNewBlock = (
+        elem: IContentData,
+        type: "text" | "code" | "asset"
+    ) => {
+        const data: IContentData[] = [
+            ...contentData.slice(0, contentData.indexOf(elem) + 1),
+            {
+                id: uuidv4(),
+                type,
+                content: "",
+            },
+            ...contentData.slice(
+                contentData.indexOf(elem) + 1,
+                contentData.length
+            ),
+        ];
+        setContentData(data);
+    };
+
+    const deleteBlock = (elem: IContentData) => {
+        const data: IContentData[] = [
+            ...contentData.slice(0, contentData.indexOf(elem)),
+            ...contentData.slice(
+                contentData.indexOf(elem) + 1,
+                contentData.length
+            ),
+        ];
+        setContentData(data);
+    };
+
+    const updateContent = (mode: "preview" | "save" | "submit") => {
+        if (mode == "preview") {
+            let tempContent = "";
+
+            for (const elem of contentData) {
+                if (elem.type === "text") tempContent += `${elem.content}\n\n`;
+                else if (elem.type === "code")
+                    tempContent += `\`\`\`${elem.language}\n${elem.content}\n\`\`\`\n\n`;
+                else tempContent += `![Asset](${elem.src})`;
+            }
+
+            setContent(tempContent);
+            setIsEditing(!isEditing);
+        } else if (mode === "save") {
+            saveWorkbook(false);
+        } else if (mode === "submit") {
+            submitDraft();
+        }
+    };
+
     const saveWorkbook = async (isSubmit: boolean) => {
         setSaveLoading(true);
 
@@ -184,6 +269,15 @@ const Editor = () => {
             );
             setSaveLoading(false);
             return;
+        }
+
+        let content = "";
+
+        for (const elem of contentData) {
+            if (elem.type === "text") content += `${elem.content}\n\n`;
+            else if (elem.type === "code")
+                content += `\`\`\`${elem.language}\n${elem.content}\n\`\`\`\n\n`;
+            else content += `![Asset](${elem.src})`;
         }
 
         await fetch(
@@ -201,7 +295,7 @@ const Editor = () => {
                         content: {
                             component: "content",
                             title: title,
-                            markdown: content,
+                            markdown: content.trim(),
                         },
                     },
                     publish: 1,
@@ -300,6 +394,68 @@ const Editor = () => {
         });
     };
 
+    const uploadAsset = async (event: any) => {
+        setUploading(true);
+
+        if (!event.target.files || event.target.files!.length === 0) {
+            setErrorMessage("Please select an image/video to upload.");
+            setUploading(false);
+            return "";
+        }
+
+        const file = event.target.files[0];
+
+        if (file.size / 1024 ** 2 > 0.1) {
+            // 100kB limit
+            setErrorMessage("Please select an image/video less than 100kB.");
+            setUploading(false);
+            return "";
+        }
+
+        const fileExt = file.name.split(".").pop();
+        const filePath = `${user!.id}.${fileExt}`;
+
+        let { error } = await supabase.storage
+            .from("workbookAssets")
+            .upload(filePath, file, { upsert: true });
+
+        if (error) {
+            setErrorMessage(error.message);
+            setUploading(false);
+            return "";
+        }
+
+        setUploading(false);
+        return filePath;
+    };
+
+    const handleAssetUpload = async (event: any, elem: IContentData) => {
+        const filePath = await uploadAsset(event);
+        handleContentChange(filePath, elem);
+        downloadAsset(filePath, elem);
+    };
+
+    const downloadAsset = (filePath: string, elem: IContentData) => {
+        const { data: imgData } = supabase.storage
+            .from("workbookAssets")
+            .getPublicUrl(filePath);
+
+        const data: IContentData[] = [
+            ...contentData.slice(0, contentData.indexOf(elem)),
+            {
+                ...elem,
+                content: filePath,
+                src: imgData.publicUrl,
+            },
+            ...contentData.slice(
+                contentData.indexOf(elem) + 1,
+                contentData.length
+            ),
+        ];
+        setContentData(data);
+        setNeedSave(true);
+    };
+
     return (
         <MainLayout
             title="NexLiber | Workbook Editor"
@@ -315,7 +471,10 @@ const Editor = () => {
                 }}
             />
             {user && completeUserData && isCompleteStripe && isMyWorkbook ? (
-                <section className={styles.container}>
+                <section
+                    className={styles.container}
+                    style={{ justifyContent: "flex-start" }}
+                >
                     <div className={styles.topDiv}>
                         <div className={styles.workbookDetails}>
                             <h1
@@ -385,7 +544,9 @@ const Editor = () => {
                         </div>
                         <div className={styles.buttons}>
                             <button
-                                onClick={() => setIsEditing(!isEditing)}
+                                onClick={() => {
+                                    updateContent("preview");
+                                }}
                                 className={styles.button}
                                 aria-label={`Switch to ${
                                     isEditing ? "Preview" : "Editing"
@@ -397,7 +558,9 @@ const Editor = () => {
                                 {isEditing ? "Preview" : "Edit"}
                             </button>
                             <button
-                                onClick={() => saveWorkbook(false)}
+                                onClick={() => {
+                                    updateContent("save");
+                                }}
                                 className={styles.blueButton}
                                 aria-label="Save Workbook Draft"
                                 title={
@@ -419,7 +582,9 @@ const Editor = () => {
                                 {saveLoading ? "Loading..." : "Save"}
                             </button>
                             <button
-                                onClick={() => submitDraft()}
+                                onClick={() => {
+                                    updateContent("submit");
+                                }}
                                 className={styles.greenButton}
                                 aria-label="Submit Workbook Draft"
                                 title={
@@ -443,28 +608,342 @@ const Editor = () => {
                         </div>
                     </div>
                     {isEditing ? (
-                        <>
-                            <sub className={styles.sub}>
-                                When navigating using only your keyboard, press
-                                Esc+Tab to exit the code editor.
-                            </sub>
-                            <CodeMirror
-                                value={content}
-                                onChange={(value) => {
-                                    setContent(value);
-                                    setNeedSave(true);
-                                }}
-                                extensions={[
-                                    markdown({
-                                        base: markdownLanguage,
-                                        codeLanguages: languages,
-                                    }),
-                                ]}
-                                theme={oneDark}
-                                height="60vh"
-                                className={styles.editorArea}
-                            />
-                        </>
+                        <div className={styles.editor}>
+                            {contentData.map((elem) => (
+                                <div key={elem.id} style={{ width: "100%" }}>
+                                    {elem.type === "text" && (
+                                        <>
+                                            <div className={styles.editorCell}>
+                                                <CodeMirror
+                                                    value={elem.content}
+                                                    onChange={(value) =>
+                                                        handleContentChange(
+                                                            value,
+                                                            elem
+                                                        )
+                                                    }
+                                                    extensions={[
+                                                        markdown({
+                                                            base: markdownLanguage,
+                                                            codeLanguages:
+                                                                languages,
+                                                        }),
+                                                    ]}
+                                                    basicSetup={{
+                                                        lineNumbers: false,
+                                                    }}
+                                                    theme={oneDark}
+                                                    className={
+                                                        styles.editorArea
+                                                    }
+                                                />
+                                                {contentData.length > 1 && (
+                                                    <button
+                                                        onClick={() =>
+                                                            deleteBlock(elem)
+                                                        }
+                                                        className={
+                                                            styles.button
+                                                        }
+                                                        style={{
+                                                            minWidth: "40px",
+                                                        }}
+                                                    >
+                                                        X
+                                                    </button>
+                                                )}
+                                            </div>
+                                            <div
+                                                className={
+                                                    styles.addBtnContainer
+                                                }
+                                            >
+                                                <button
+                                                    onClick={() =>
+                                                        addNewBlock(
+                                                            elem,
+                                                            "text"
+                                                        )
+                                                    }
+                                                    className={styles.button}
+                                                >
+                                                    + Text
+                                                </button>
+                                                <button
+                                                    onClick={() =>
+                                                        addNewBlock(
+                                                            elem,
+                                                            "code"
+                                                        )
+                                                    }
+                                                    className={styles.button}
+                                                >
+                                                    + Code
+                                                </button>
+                                                <button
+                                                    onClick={() =>
+                                                        addNewBlock(
+                                                            elem,
+                                                            "asset"
+                                                        )
+                                                    }
+                                                    className={styles.button}
+                                                >
+                                                    + Asset
+                                                </button>
+                                            </div>
+                                        </>
+                                    )}
+                                    {elem.type === "code" && (
+                                        <>
+                                            <div className={styles.codeBlock}>
+                                                <select
+                                                    value={elem.language}
+                                                    className={
+                                                        styles.langSelect
+                                                    }
+                                                    onChange={(e) => {
+                                                        const data: IContentData[] =
+                                                            [
+                                                                ...contentData.slice(
+                                                                    0,
+                                                                    contentData.indexOf(
+                                                                        elem
+                                                                    )
+                                                                ),
+                                                                {
+                                                                    ...elem,
+                                                                    language:
+                                                                        e
+                                                                            .currentTarget
+                                                                            .value,
+                                                                },
+                                                                ...contentData.slice(
+                                                                    contentData.indexOf(
+                                                                        elem
+                                                                    ) + 1,
+                                                                    contentData.length
+                                                                ),
+                                                            ];
+                                                        setContentData(data);
+                                                        setNeedSave(true);
+                                                    }}
+                                                >
+                                                    <option
+                                                        disabled
+                                                        selected
+                                                        value=""
+                                                    >
+                                                        Select Language
+                                                    </option>
+                                                    {langs.map((lang) => (
+                                                        <option
+                                                            key={lang.value}
+                                                            value={lang.value}
+                                                        >
+                                                            {lang.display}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                <div
+                                                    className={
+                                                        styles.editorCell
+                                                    }
+                                                >
+                                                    <CodeMirror
+                                                        value={elem.content}
+                                                        onChange={(value) =>
+                                                            handleContentChange(
+                                                                value,
+                                                                elem
+                                                            )
+                                                        }
+                                                        theme={oneDark}
+                                                        className={
+                                                            styles.editorArea
+                                                        }
+                                                    />
+                                                    {contentData.length > 1 && (
+                                                        <button
+                                                            onClick={() =>
+                                                                deleteBlock(
+                                                                    elem
+                                                                )
+                                                            }
+                                                            className={
+                                                                styles.button
+                                                            }
+                                                            style={{
+                                                                minWidth:
+                                                                    "40px",
+                                                            }}
+                                                        >
+                                                            X
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <div
+                                                className={
+                                                    styles.addBtnContainer
+                                                }
+                                            >
+                                                <button
+                                                    onClick={() =>
+                                                        addNewBlock(
+                                                            elem,
+                                                            "text"
+                                                        )
+                                                    }
+                                                    className={styles.button}
+                                                >
+                                                    + Text
+                                                </button>
+                                                <button
+                                                    onClick={() =>
+                                                        addNewBlock(
+                                                            elem,
+                                                            "code"
+                                                        )
+                                                    }
+                                                    className={styles.button}
+                                                >
+                                                    + Code
+                                                </button>
+                                                <button
+                                                    onClick={() =>
+                                                        addNewBlock(
+                                                            elem,
+                                                            "asset"
+                                                        )
+                                                    }
+                                                    className={styles.button}
+                                                >
+                                                    + Asset
+                                                </button>
+                                            </div>
+                                        </>
+                                    )}
+                                    {elem.type === "asset" && (
+                                        <>
+                                            <div className={styles.editorCell}>
+                                                <label
+                                                    htmlFor="asset"
+                                                    style={{
+                                                        cursor: "pointer",
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        justifyContent:
+                                                            "center",
+                                                        flexDirection: "column",
+                                                        width: "100%",
+                                                        margin: "0",
+                                                    }}
+                                                >
+                                                    <input
+                                                        type="file"
+                                                        accept="video/*,image/*"
+                                                        name="asset"
+                                                        id="asset"
+                                                        style={{
+                                                            display: "none",
+                                                            cursor: "default",
+                                                        }}
+                                                        onChange={async (
+                                                            event
+                                                        ) => {
+                                                            handleAssetUpload(
+                                                                event,
+                                                                elem
+                                                            );
+                                                        }}
+                                                        disabled={uploading}
+                                                    />
+                                                    {elem.src ? (
+                                                        <Image
+                                                            src={elem.src}
+                                                            alt="Asset"
+                                                            width={100}
+                                                            height={100}
+                                                            className={
+                                                                styles.asset
+                                                            }
+                                                        />
+                                                    ) : (
+                                                        <div
+                                                            className={
+                                                                styles.button
+                                                            }
+                                                            style={{
+                                                                marginBottom:
+                                                                    "1rem",
+                                                            }}
+                                                        >
+                                                            Select image/video
+                                                            to upload
+                                                        </div>
+                                                    )}
+                                                </label>
+                                                {contentData.length > 1 && (
+                                                    <button
+                                                        onClick={() =>
+                                                            deleteBlock(elem)
+                                                        }
+                                                        className={
+                                                            styles.button
+                                                        }
+                                                        style={{
+                                                            minWidth: "40px",
+                                                        }}
+                                                    >
+                                                        X
+                                                    </button>
+                                                )}
+                                            </div>
+                                            <div
+                                                className={
+                                                    styles.addBtnContainer
+                                                }
+                                            >
+                                                <button
+                                                    onClick={() =>
+                                                        addNewBlock(
+                                                            elem,
+                                                            "text"
+                                                        )
+                                                    }
+                                                    className={styles.button}
+                                                >
+                                                    + Text
+                                                </button>
+                                                <button
+                                                    onClick={() =>
+                                                        addNewBlock(
+                                                            elem,
+                                                            "code"
+                                                        )
+                                                    }
+                                                    className={styles.button}
+                                                >
+                                                    + Code
+                                                </button>
+                                                <button
+                                                    onClick={() =>
+                                                        addNewBlock(
+                                                            elem,
+                                                            "asset"
+                                                        )
+                                                    }
+                                                    className={styles.button}
+                                                >
+                                                    + Asset
+                                                </button>
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
                     ) : (
                         <WorkbookContent {...{ content }} />
                     )}
