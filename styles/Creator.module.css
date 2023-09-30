@@ -213,6 +213,36 @@
     row-gap: 0.5rem;
 }
 
+.editor {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+    row-gap: 1rem;
+}
+
+.codeBlock {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+    row-gap: 0.5rem;
+}
+
+.langSelect {
+    outline: none;
+    background: none;
+    border: 1px solid var(--color-theme-blur);
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    width: 200px;
+    margin: 0;
+    color: var(--color-text);
+    font-size: 1rem;
+}
+
 .input {
     outline: none;
     background: none;
@@ -225,15 +255,25 @@
     font-size: 1rem;
 }
 
-.input:focus {
+.input:focus,
+.langSelect:focus {
     border: 1px solid var(--color-theme);
 }
 
 .editorArea {
     width: 100%;
-    min-height: 60vh;
+    margin-bottom: 1rem;
     padding: 0;
     font-size: 1rem;
+}
+
+.addBtnContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    width: 100%;
+    column-gap: 1rem;
 }
 
 .sub {
@@ -244,6 +284,21 @@
     padding: 0;
     width: 100%;
     text-align: left;
+}
+
+.asset {
+    width: 50%;
+    height: auto;
+    margin-bottom: 1rem;
+}
+
+.editorCell {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    flex-direction: row;
+    column-gap: 1rem;
+    width: 100%;
 }
 
 @media (max-width: 700px) {
