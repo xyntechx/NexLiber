@@ -53,8 +53,8 @@ const Docs = () => {
                 <MDElem md={"---"}>
                     <hr />
                 </MDElem>
-                <MDElem md={"[Link](https://nexliber.com)"}>
-                    <Link href="https://nexliber.com" className={styles.link}>
+                <MDElem md={"[Link](https://nexliberv2.vercel.app)"}>
+                    <Link href="https://nexliberv2.vercel.app" className={styles.link}>
                         Link
                     </Link>
                 </MDElem>

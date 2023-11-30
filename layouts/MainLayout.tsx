@@ -26,11 +26,11 @@ const MainLayout = ({
                 <meta property="og:description" content={description} />
                 <meta
                     property="og:image"
-                    content="https://nexliber.com/favicons/og-image.png"
+                    content="https://nexliberv2.vercel.app/favicons/og-image.png"
                 />
                 <meta
                     property="og:url"
-                    content={`https://nexliber.com${url}`}
+                    content={`https://nexliberv2.vercel.app${url}`}
                 />
                 <meta property="og:type" content="website" />
             </Head>

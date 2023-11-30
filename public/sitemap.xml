@@ -8,47 +8,47 @@
 
 
 <url>
-  <loc>https://nexliber.com/</loc>
+  <loc>https://nexliberv2.vercel.app/</loc>
   <lastmod>2023-02-28T16:26:29+00:00</lastmod>
   <priority>1.00</priority>
 </url>
 <url>
-  <loc>https://nexliber.com/library</loc>
+  <loc>https://nexliberv2.vercel.app/library</loc>
   <lastmod>2023-02-28T16:26:29+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://nexliber.com/docs</loc>
+  <loc>https://nexliberv2.vercel.app/docs</loc>
   <lastmod>2023-02-28T16:26:29+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://nexliber.com/auth</loc>
+  <loc>https://nexliberv2.vercel.app/auth</loc>
   <lastmod>2023-02-28T16:26:29+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://nexliber.com/creator</loc>
+  <loc>https://nexliberv2.vercel.app/creator</loc>
   <lastmod>2023-02-28T16:26:29+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://nexliber.com/community</loc>
+  <loc>https://nexliberv2.vercel.app/community</loc>
   <lastmod>2023-02-28T16:26:29+00:00</lastmod>
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://nexliber.com/markdown-cheatsheet</loc>
+  <loc>https://nexliberv2.vercel.app/markdown-cheatsheet</loc>
   <lastmod>2023-02-28T16:26:29+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://nexliber.com/account</loc>
+  <loc>https://nexliberv2.vercel.app/account</loc>
   <lastmod>2023-02-28T16:26:29+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://nexliber.com/auth/reset-password</loc>
+  <loc>https://nexliberv2.vercel.app/auth/reset-password</loc>
   <lastmod>2023-02-28T16:26:29+00:00</lastmod>
   <priority>0.64</priority>
 </url>
