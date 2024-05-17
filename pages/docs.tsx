@@ -501,7 +501,7 @@ const Docs = () => {
                 <p>
                     All information and data collected by NexLiber (e.g. your
                     name, email, etc.) will only be used on and for
-                    nexliberv2.vercel.app.
+                    nexliber.vercel.app.
                 </p>
                 <h2
                     id="stripe-requirements"

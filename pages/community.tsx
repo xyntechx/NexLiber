@@ -20,11 +20,11 @@ const Community = () => {
                 />
                 <meta
                     property="og:image"
-                    content="https://nexliberv2.vercel.app/favicons/og-image.png"
+                    content="https://nexliber.vercel.app/favicons/og-image.png"
                 />
                 <meta
                     property="og:url"
-                    content="https://nexliberv2.vercel.app/community"
+                    content="https://nexliber.vercel.app/community"
                 />
                 <meta property="og:type" content="website" />
                 <meta
